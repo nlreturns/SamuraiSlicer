@@ -2,6 +2,7 @@
 #include <math.h>
 #include "GameObject.h"
 #include "CubeComponent.h"
+#include "ObjectComponent.h"
 #include "SpinComponent.h"
 
 int height = 800;
@@ -28,15 +29,11 @@ void init()
 {
 	glEnable(GL_DEPTH_TEST);
 	
-	for(int i = -10; i < 10; i++)
-	{
-		GameObject* o = new GameObject();
-		o->addComponent(new CubeComponent(0.5));
-		o->addComponent(new SpinComponent((i+20)*2));
-		o->position = Vec3f(i, 0, 0);
-		objects.push_back(o);
-	}
-
+	GameObject* o = new GameObject();
+	o->addComponent(new ObjectComponent("models/apple/Apple.obj"));
+	o->addComponent(new SpinComponent(40.0f));
+	o->position = Vec3f(0.0f, 0.0f, 0.0f);
+	objects.push_back(o);
 }
 
 void display()
