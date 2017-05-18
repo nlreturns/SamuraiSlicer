@@ -240,4 +240,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+#except the project file for hardcoded paths in project settings
+.vcxproj
 /SamuraiSlicer
