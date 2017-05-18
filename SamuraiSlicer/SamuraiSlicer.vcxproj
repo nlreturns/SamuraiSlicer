@@ -164,8 +164,8 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="CubeComponent.h" />
     <ClInclude Include="DrawComponent.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="SpinComponent.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Vec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
