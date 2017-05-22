@@ -1,6 +1,13 @@
 #pragma once
 #include <GL/freeglut.h>
 #include "GameObject.h"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <iostream>
+#include <string>
+
+using namespace cv;
+using namespace std;
 
 struct plaine {
 	double topX1;
@@ -17,3 +24,4 @@ plaine SwordPlaine;
 
 void DrawSwordPlaine(void);
 bool DetectCollision(GameObject object);
+int readCam(void);

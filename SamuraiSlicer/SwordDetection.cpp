@@ -1,12 +1,6 @@
 #include "SwordDetection.h"
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <iostream>
-#include <string>
 
 
-//func def
-int readCam();
 // Returns true if the GameObject colides with the sword plaine
 bool DetectCollision(GameObject object) {
 	return (
