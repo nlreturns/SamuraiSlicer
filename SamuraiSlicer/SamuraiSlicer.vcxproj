@@ -158,6 +158,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SpinComponent.cpp" />
+    <ClCompile Include="SwordDetection.cpp" />
     <ClCompile Include="Vec.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +167,7 @@
     <ClInclude Include="DrawComponent.h" />
     <ClInclude Include="SpinComponent.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="SwordDetection.h" />
     <ClInclude Include="Vec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

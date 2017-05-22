@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "CubeComponent.h"
 #include "SpinComponent.h"
+#include "SwordDetection.h"
 
 int height = 800;
 int width = 1200;
@@ -55,9 +56,10 @@ void display()
 			  0, 1, 0);
 
 
-	for (auto &o : objects)
-		o->draw();
+//	for (auto &o : objects)
+//		o->draw();
 
+	DrawSwordPlaine();
 
 	glutSwapBuffers();
 }
