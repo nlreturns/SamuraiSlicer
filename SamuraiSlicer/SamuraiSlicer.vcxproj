@@ -112,7 +112,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>freeglut/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -155,6 +155,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="CubeComponent.cpp" />
     <ClCompile Include="DrawComponent.cpp" />
+    <ClCompile Include="FallComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjectComponent.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="CubeComponent.h" />
     <ClInclude Include="DrawComponent.h" />
+    <ClInclude Include="FallComponent.h" />
     <ClInclude Include="ObjectComponent.h" />
     <ClInclude Include="SpinComponent.h" />
     <ClInclude Include="stb_image.h" />

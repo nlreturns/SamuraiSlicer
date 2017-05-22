@@ -183,6 +183,7 @@ void ObjectComponent::draw()
 		glBegin(GL_TRIANGLES);
 		for (auto &face : group->faces) {
 			for (auto &vertex : face.vertices) {
+				glNormal3fv(normals[vertex.normal].v);
 				glVertex3f(vertices[vertex.position].x, vertices[vertex.position].y, vertices[vertex.position].z);
 			}
 		}
