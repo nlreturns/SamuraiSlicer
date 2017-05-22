@@ -32,7 +32,7 @@ void init()
 	GameObject* o = new GameObject();
 	o->addComponent(new ObjectComponent("models/apple/Apple.obj"));
 	o->addComponent(new SpinComponent(40.0f));
-	o->position = Vec3f(0.0f, 0.0f, 0.0f);
+	o->position = Vec3f(0.0f, 0.0f, -5.0f);
 	objects.push_back(o);
 }
 

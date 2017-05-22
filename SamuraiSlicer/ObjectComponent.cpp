@@ -177,9 +177,6 @@ ObjectComponent::~ObjectComponent(void)
 {
 }
 
-
-
-
 void ObjectComponent::draw()
 {
 	for (auto &group : groups) {

@@ -76,5 +76,5 @@ public:
 	ObjectComponent(const std::string &filename);
 	~ObjectComponent(void);
 
-	void draw();
+	virtual void draw() override;
 };
