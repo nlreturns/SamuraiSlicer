@@ -82,7 +82,9 @@ int readCam()
 		cvtColor(frame, grayFrame, CV_BGR2GRAY);
 
 		//threshold color red
-		inRange(hsvFrame, cv::Scalar(170, 160, 100), cv::Scalar(179, 255, 255), upperRed);
+		//140-200
+		//0-255
+		inRange(hsvFrame, cv::Scalar(160,80, 100), cv::Scalar(180, 160, 255), upperRed);
 		inRange(hsvFrame, cv::Scalar(0, 160, 100), cv::Scalar(10, 255, 255), lowerRed);
 
 		//testcode
