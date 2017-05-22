@@ -1,6 +1,8 @@
 #include "SwordDetection.h"
 
 
+plaine SwordPlaine;
+
 // Returns true if the GameObject colides with the sword plaine
 bool DetectCollision(GameObject object) {
 	return (
@@ -35,30 +37,30 @@ void DrawSwordPlaine() {
 
 int readCam()
 {
-	VideoCapture cap(1);
+	cv::VideoCapture cap(1);
 
 	// Controle of de camera wordt herkend.
 	if (!cap.isOpened())
 	{
-		cout << "Cannot open the video cam" << endl;
+		std::cout << "Cannot open the video cam" << std::endl;
 		return -1;
 	}
 
 	// Breedte en hooogte van de frames die de camera genereert ophalen. 
 	double dWidth = cap.get(CV_CAP_PROP_FRAME_WIDTH);
 	double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
-	cout << "Frame size : " << dWidth << " x " << dHeight << endl;
+	std::cout << "Frame size : " << dWidth << " x " << dHeight << std::endl;
 
 	// Window maken waarin de beelden "live" getoond worden
-	namedWindow("SamuraiSlicer", CV_WINDOW_AUTOSIZE);
-	namedWindow("Channel 1", CV_WINDOW_AUTOSIZE);
-	namedWindow("Channel 2", CV_WINDOW_AUTOSIZE);
+	cv::namedWindow("SamuraiSlicer", CV_WINDOW_AUTOSIZE);
+	cv::namedWindow("Channel 1", CV_WINDOW_AUTOSIZE);
+	cv::namedWindow("Channel 2", CV_WINDOW_AUTOSIZE);
 
 	// Continue loop waarin een beeld wordt opgehaald en wordt getoond in het window
-	Mat frame, nonFlipped, hsvFrame, grayFrame;
-	Mat upperRed, lowerRed, sword;
+	cv::Mat frame, nonFlipped, hsvFrame, grayFrame;
+	cv::Mat upperRed, lowerRed, sword;
 	//testcode
-	namedWindow("SWORD", CV_WINDOW_AUTOSIZE);
+	cv::namedWindow("SWORD", CV_WINDOW_AUTOSIZE);
 
 	while (1)
 	{
@@ -69,7 +71,7 @@ int readCam()
 		// Controlleer of het frame goed gelezen is.
 		if (!bSuccess)
 		{
-			cout << "Cannot read a frame from video stream" << endl;
+			std::cout << "Cannot read a frame from video stream" << std::endl;
 			break;
 		}
 		//flips frame
@@ -80,8 +82,8 @@ int readCam()
 		cvtColor(frame, grayFrame, CV_BGR2GRAY);
 
 		//threshold color red
-		inRange(hsvFrame, Scalar(170, 160, 100), Scalar(179, 255, 255), upperRed);
-		inRange(hsvFrame, Scalar(0, 160, 100), Scalar(10, 255, 255), lowerRed);
+		inRange(hsvFrame, cv::Scalar(170, 160, 100), cv::Scalar(179, 255, 255), upperRed);
+		inRange(hsvFrame, cv::Scalar(0, 160, 100), cv::Scalar(10, 255, 255), lowerRed);
 
 		//testcode
 
@@ -94,9 +96,9 @@ int readCam()
 
 		imshow("SamuraiSlicer", frame);
 		//  Wacht 30 ms op ESC-toets. Als ESC-toets is ingedrukt verlaat dan de loop
-		if (waitKey(1) == 27)
+		if (cv::waitKey(1) == 27)
 		{
-			cout << "esc key is pressed by user" << endl;
+			std::cout << "esc key is pressed by user" << std::endl;
 			break;
 		}
 	}

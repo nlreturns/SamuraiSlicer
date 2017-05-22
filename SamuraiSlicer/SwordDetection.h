@@ -6,9 +6,6 @@
 #include <iostream>
 #include <string>
 
-using namespace cv;
-using namespace std;
-
 struct plaine {
 	double topX1;
 	double topX2;
@@ -20,7 +17,6 @@ struct plaine {
 	double downY2;
 };
 
-plaine SwordPlaine;
 
 void DrawSwordPlaine(void);
 bool DetectCollision(GameObject object);

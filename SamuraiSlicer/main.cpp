@@ -91,6 +91,7 @@ int main(int argc, char* argv[])
 	glutKeyboardFunc(keyboard);
 	//opengl init
 	init();
+	readCam();
 
 	glutMainLoop();
 
