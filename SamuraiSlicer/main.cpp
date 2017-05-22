@@ -42,6 +42,22 @@ void loadBackground() {
 }
 
 
+
+GLuint startscreen;
+void loadStartscreen() {
+	glGenTextures(1, &background);
+	glBindTexture(GL_TEXTURE_2D, background);
+
+	int width, height, depth;
+	unsigned char* data = stbi_load("images/startscreen.png", &width, &height, &depth, 4);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	stbi_image_free(data);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+
 void initFruit() {
 
 	GameObject* apple = new GameObject();
@@ -67,11 +83,12 @@ void init()
 	
 	initFruit();
 
-	loadBackground();
+	loadStartscreen();
 }
 
 void display()
 {
+	loadBackground();
 	glClearColor(0.4f, 0.4f, 0.4f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
@@ -125,16 +142,63 @@ void idle()
 }
 
 
+void mouseButton(int button, int state, int x, int y) {
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
+		glutDisplayFunc(display);
+		glutIdleFunc(idle);
+		glutReshapeFunc(reshape);
+		glutKeyboardFunc(keyboard);
+	}
+}
+
+void startMenu() {
+	glClearColor(0.4f, 0.4f, 0.4f, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, width, height, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, background);
+	glColor4f(1, 1, 1, 1);
+	glDisable(GL_LIGHTING);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
+	glTexCoord2f(0, 1); glVertex3f(0, height, 0);
+	glTexCoord2f(1, 1); glVertex3f(width, height, 0);
+	glTexCoord2f(1, 0); glVertex3f(width, 0, 0);
+	glEnd();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(90.0f, (float)width / (float)height, 0.1f, 500.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0, 0, 7,
+		0, 0, 0,
+		0, 1, 0);
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+
+
+	glutSwapBuffers();
+}
+
+
 int main(int argc, char* argv[])
 {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("Samurai Slicer");
-	glutDisplayFunc(display);
-	glutIdleFunc(idle);
-	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
+	glutDisplayFunc(startMenu);
+	glutMouseFunc(mouseButton);
 	init();
 
 	glutMainLoop();
