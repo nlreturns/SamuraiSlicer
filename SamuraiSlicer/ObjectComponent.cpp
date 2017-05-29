@@ -177,6 +177,14 @@ ObjectComponent::~ObjectComponent(void)
 {
 }
 
+std::map<std::string, ObjectComponent*> ObjectComponent::objectCache;
+ObjectComponent * ObjectComponent::build(const std::string & fileName)
+{
+	if (objectCache.find(fileName) == objectCache.end())
+		objectCache[fileName] = new ObjectComponent(fileName);
+	return objectCache[fileName];
+}
+
 void ObjectComponent::draw()
 {
 	for (auto &group : groups) {

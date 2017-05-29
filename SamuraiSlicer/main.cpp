@@ -10,6 +10,8 @@
 
 int height = 800;
 int width = 1200;
+int timeElapsed = 0;
+int spawnTime = 3000;
 
 std::list<GameObject*> objects;
 
@@ -44,19 +46,21 @@ void loadBackground() {
 
 void initFruit() {
 
-	GameObject* apple = new GameObject();
-	apple->addComponent(new ObjectComponent("models/appeltje/appeltje.obj"));
-	apple->addComponent(new SpinComponent(40.0f));
-	apple->addComponent(new FallComponent());
-	apple->position = Vec3f(0.0f, 15.0f, 0.0f);
-	objects.push_back(apple);
+	for (int i = 0; i < 500; i ++) {
+		GameObject* fruit = new GameObject();
 
-	GameObject* banana = new GameObject();
-	banana->addComponent(new ObjectComponent("models/banaan/banaan.obj"));
-	banana->addComponent(new SpinComponent(40.0f));
-	banana->addComponent(new FallComponent());
-	banana->position = Vec3f(3.0f, 19.0f, 0.0f);
-	objects.push_back(banana);
+		int random = rand() % 2;
+		if (random == 0) 
+			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
+		else if (random == 1)
+			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
+		fruit->addComponent(new SpinComponent(rand()%40+20));
+		fruit->addComponent(new FallComponent());
+		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
+
+		objects.push_back(fruit);
+	}
+
 }
 
 void init()
@@ -107,14 +111,18 @@ void display()
 	for (auto &o : objects)
 		o->draw();
 
-
 	glutSwapBuffers();
 }
 
 int lastTime = 0;
+bool firstTime = true;
 void idle()
 {
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
+	if (firstTime) {
+		firstTime = false;
+		lastTime = currentTime;
+	}
 	float deltaTime = (currentTime - lastTime) / 1000.0f;
 	lastTime = currentTime;
 
@@ -132,10 +140,10 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutCreateWindow("Samurai Slicer");
 	glutDisplayFunc(display);
-	glutIdleFunc(idle);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
 	init();
+	glutIdleFunc(idle);
 
 	glutMainLoop();
 
