@@ -79,7 +79,7 @@ void initFruit() {
 
 void initAppeltje() {
 	GameObject* apple = new GameObject();
-	apple->addComponent(new ObjectComponent("models/appeltje/appeltjeB.obj"));
+	apple->addComponent(new ObjectComponent("models/banaan/banaanB.obj"));
 	apple->addComponent(new SpinComponent(40.0f));
 	apple->addComponent(new FallComponent());
 	apple->position = Vec3f(0.0f, 15.0f, 0.0f);
@@ -87,7 +87,7 @@ void initAppeltje() {
 
 
 	GameObject* appe = new GameObject();
-	appe->addComponent(new ObjectComponent("models/appeltje/appeltjeO.obj"));
+	appe->addComponent(new ObjectComponent("models/banaan/banaanO.obj"));
 	appe->addComponent(new SpinComponent(40.0f));
 	appe->addComponent(new FallComponent());
 	appe->position = Vec3f(0.0f, 15.0f, 0.0f);
