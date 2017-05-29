@@ -23,6 +23,7 @@ public:
 
 	void addComponent(Component* component);
 	void update(float elapsedTime);
+	bool detectCollision();
 	void draw();
 };
 
