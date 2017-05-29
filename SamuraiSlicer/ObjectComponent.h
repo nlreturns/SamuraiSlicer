@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 
 #include <windows.h>
 #include <gl/GL.h>
@@ -72,9 +73,12 @@ private:
 
 
 	void loadMaterialFile(const std::string &fileName, const std::string &dirName);
-public:
 	ObjectComponent(const std::string &filename);
+
+	static std::map<std::string, ObjectComponent*> objectCache;
+public:
 	~ObjectComponent(void);
+	static ObjectComponent* build(const std::string &fileName);
 
 	virtual void draw() override;
 };
