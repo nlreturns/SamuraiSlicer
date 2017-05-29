@@ -129,6 +129,11 @@ void idle()
 	for (auto &o : objects)
 		o->update(deltaTime);
 
+	for (GameObject* o : objects) {
+		if (o->detectCollision()) 
+			objects.remove(o);
+	}
+
 	glutPostRedisplay();
 }
 

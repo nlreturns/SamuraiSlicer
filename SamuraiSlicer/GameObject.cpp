@@ -41,3 +41,8 @@ void GameObject::update(float elapsedTime)
 	for (auto &c : components)
 		c->update(elapsedTime);
 }
+
+bool GameObject::detectCollision() 
+{
+	return false; // TODO: functie van SwordDetection 
+}
