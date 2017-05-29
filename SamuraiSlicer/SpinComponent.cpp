@@ -14,5 +14,6 @@ SpinComponent::~SpinComponent()
 
 void SpinComponent::update(float elapsedTime)
 {
-	gameObject->rotation.x += elapsedTime * speed;
+	gameObject->rotation.y += elapsedTime * speed;
+	gameObject->rotation.z += elapsedTime * speed * 2;
 }
