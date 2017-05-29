@@ -6,6 +6,7 @@
 #include "CubeComponent.h"
 #include "ObjectComponent.h"
 #include "SpinComponent.h"
+#include "SwordDetection.h"
 #include "FallComponent.h"
 
 int height = 800;
@@ -111,6 +112,8 @@ void display()
 	for (auto &o : objects)
 		o->draw();
 
+//	DrawSwordPlaine();
+
 	glutSwapBuffers();
 }
 
@@ -148,6 +151,7 @@ int main(int argc, char* argv[])
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
 	init();
+//	readCam();
 	glutIdleFunc(idle);
 
 	glutMainLoop();
