@@ -188,10 +188,22 @@ ObjectComponent * ObjectComponent::build(const std::string & fileName)
 void ObjectComponent::draw()
 {
 	for (auto &group : groups) {
+		MaterialInfo *material = materials[group->materialIndex];
+		if (material->texture)
+		{
+			material->texture->bind();
+			glEnable(GL_TEXTURE_2D);
+		}
+		else
+		{
+			glDisable(GL_TEXTURE_2D);
+		}
 		glBegin(GL_TRIANGLES);
 		for (auto &face : group->faces) {
 			for (auto &vertex : face.vertices) {
 				glNormal3fv(normals[vertex.normal].v);
+				glTexCoord2fv(texcoords[vertex.texcoord].v);
+
 				glVertex3f(vertices[vertex.position].x, vertices[vertex.position].y, vertices[vertex.position].z);
 			}
 		}
@@ -241,7 +253,15 @@ void ObjectComponent::loadMaterialFile(const std::string &fileName, const std::s
 			currentMaterial->texture = new Texture(dirName + "/" + tex);
 		}
 		else if (params[0] == "kd")
-		{//TODO, diffuse color
+		{
+
+			std::vector<std::string> tokens = split(line, " ");
+			if (tokens.size() != 4)
+				return;
+
+			std::strtod(tokens.at(1).c_str(), 0);
+			std::strtod(tokens.at(2).c_str(), 0);
+			std::strtod(tokens.at(3).c_str(), 0);
 		}
 		else if (params[0] == "ka")
 		{//TODO, ambient color

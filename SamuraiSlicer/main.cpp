@@ -50,11 +50,13 @@ void initFruit() {
 	for (int i = 0; i < 500; i ++) {
 		GameObject* fruit = new GameObject();
 
-		int random = rand() % 2;
+		int random = rand() % 3;
 		if (random == 0) 
 			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
 		else if (random == 1)
 			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
+		else if (random == 2)
+			fruit->addComponent(ObjectComponent::build("models/lemon/lemon.obj"));
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
 		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
