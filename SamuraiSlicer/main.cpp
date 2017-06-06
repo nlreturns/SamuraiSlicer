@@ -97,19 +97,8 @@ void init()
 	
 }
 
-void displayText(int x, int y, const char *string) {
-	int j = strlen(string);
-
-	glRasterPos2f(x, y);
-	for (int i = 0; i < j; i++) {
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
-	}
-}
-
 void display()
 {
-	std::string s = "score";
-	displayText(100, 0, s.c_str());
 	glClearColor(0.4f, 0.4f, 0.4f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
@@ -140,13 +129,10 @@ void display()
 
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHTING);
-	glClear(GL_DEPTH_BUFFER_BIT);	
-
-	
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	for (auto &o : objects)
 		o->draw();
-
 
 	DrawSwordPlaine();
 
@@ -217,7 +203,6 @@ void mouseButton(int button, int state, int x, int y) {
 		isStarted = true;
 	}
 }
-
 
 void startMenu() {
 	glClearColor(0.4f, 0.4f, 0.4f, 1);
