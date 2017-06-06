@@ -13,6 +13,7 @@ int height = 800;
 int width = 1200;
 int timeElapsed = 0;
 int spawnTime = 3000;
+int score = 0;
 
 std::list<GameObject*> objects;
 
@@ -133,8 +134,11 @@ void idle()
 		o->update(deltaTime);
 
 	for (GameObject* o : objects) {
-		if (DetectCollision(*o)) 
+		if (DetectCollision(*o)) {
 			objects.remove(o);
+			score++;
+		}
+
 	}
 
 	glutPostRedisplay();
