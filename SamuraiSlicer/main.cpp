@@ -25,13 +25,12 @@ void reshape(int w, int h)
 	glutPostRedisplay();
 }
 
-void printScore(char *st)
+void printScore(int s)
 {
-	int l, i;
-
-	l = strlen(st);
+	char score[32];
+	_itoa_s(s, score, 10);
+	int lenght = floor(log10(abs(s))) + 1;
 	glRasterPos3f(-3.1f, 1.9f, 4.9f);
-
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'S');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'C');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'O');
@@ -39,10 +38,12 @@ void printScore(char *st)
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'E');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
-	for (i = 0; i < l; i++) // loop until i is greater then l
-	{
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, st[i]);
-	}
+	if (s == 0) {glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');}
+	else {for (int i = 0; i < lenght; i++)
+		{glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, score[i]);}}
+}
+
+char intToChar(int i) {
 
 }
 
@@ -130,7 +131,7 @@ void display()
 	glEnable(GL_LIGHTING);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	printScore("420"); // Print score to screen
+	printScore(score); // Print score to screen
 	for (auto &o : objects)
 		o->draw();
 
