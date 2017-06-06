@@ -17,8 +17,15 @@ bool isStarted = false;
 int timeElapsed = 0;
 int spawnTime = 3000;
 
+int fx, fy;
+int lx, ly;
+
 std::list<GameObject*> objects;
 irrklang::ISoundEngine* engine;
+
+cv::VideoCapture cap(1);
+cv::Mat frame, nonFlipped, hsvFrame, rgbFrame;
+cv::Mat redChannel[3], saturationChannel[3], redValue, satValue, sword;
 
 void playSounds(int nr)
 {
@@ -100,7 +107,6 @@ void loadStartscreen() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-
 void initFruit() {
 
 	for (int i = 0; i < 500; i ++) {
@@ -122,14 +128,20 @@ void initFruit() {
 
 }
 
+void camInit() 
+{
+	cv::namedWindow("SamuraiSlicer", CV_WINDOW_AUTOSIZE);
+}
+
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	
+
 	engine = irrklang::createIrrKlangDevice();
 	playMusic(0);
+	camInit();
 
 	loadStartscreen();
 }
@@ -171,9 +183,44 @@ void display()
 	for (auto &o : objects)
 		o->draw();
 
-//	DrawSwordPlaine();
+	DrawSwordPlaine(fx, fy, lx, ly);
 
 	glutSwapBuffers();
+}
+
+void CamLoop()
+{
+	// Lees een nieuw frame
+	bool bSuccess = cap.read(nonFlipped);
+
+	// Controlleer of het frame goed gelezen is.
+	if (!bSuccess)
+	{
+		std::cout << "Cannot read a frame from video stream" << std::endl;
+	}
+	//flips frame
+	flip(nonFlipped, frame, 1);
+
+	//get saturation channel
+	cvtColor(frame, hsvFrame, CV_RGB2HSV);
+	split(hsvFrame, saturationChannel);
+
+	// get red channel
+	split(frame, redChannel);
+
+	//thresholds channels
+	threshold(redChannel[2], redValue, 220, 255, CV_THRESH_BINARY);
+	threshold(saturationChannel[1], satValue, 160, 255, CV_THRESH_BINARY);
+
+	//multiplies thresholded channels
+	multiply(redValue, satValue, sword, 1.0, -1);
+
+	imshow("SamuraiSlicer", sword);
+
+	findFirstPixel(sword, &fx, &fy);
+	findLastPixel(sword, &lx, &ly);
+
+
 }
 
 int lastTime = 0;
@@ -188,6 +235,8 @@ void idle()
 	float deltaTime = (currentTime - lastTime) / 1000.0f;
 	lastTime = currentTime;
 
+	CamLoop();
+
 	for (auto &o : objects)
 		o->update(deltaTime);
 
@@ -198,7 +247,6 @@ void idle()
 
 	glutPostRedisplay();
 }
-
 
 void mouseButton(int button, int state, int x, int y) {
 	// only start motion if the left button is pressed
