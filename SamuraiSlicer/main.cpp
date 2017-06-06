@@ -13,6 +13,7 @@ int height = 800;
 int width = 1200;
 int timeElapsed = 0;
 int spawnTime = 3000;
+int score = 0;
 
 std::list<GameObject*> objects;
 
@@ -64,13 +65,26 @@ void initFruit() {
 
 }
 
+void displayText(float x, float y, const char *string) {
+	int j = strlen(string);
+
+	glColor3f(0, 255, 0);
+	glRasterPos2f(x, y);
+	for (int i = 0; i < j; i++) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
+	}
+}
+
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	
-	initFruit();
+	initFruit(); 
+	
+	std::string s = std::to_string(score);
+	displayText(-8, 8, s.c_str());
 
 	loadBackground();
 }
@@ -133,9 +147,14 @@ void idle()
 		o->update(deltaTime);
 
 	for (GameObject* o : objects) {
-		if (DetectCollision(*o)) 
+		if (DetectCollision(*o)) {
 			objects.remove(o);
+			score++;
+		}
 	}
+
+	std::string s = std::to_string(score);
+	displayText(-8, 8, s.c_str());
 
 	glutPostRedisplay();
 }
