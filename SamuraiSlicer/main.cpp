@@ -46,7 +46,6 @@ void loadBackground() {
 
 
 void initFruit() {
-
 	for (int i = 0; i < 500; i ++) {
 		GameObject* fruit = new GameObject();
 
@@ -63,7 +62,6 @@ void initFruit() {
 
 		objects.push_back(fruit);
 	}
-
 }
 
 void init()
