@@ -114,7 +114,7 @@ void display()
 	for (auto &o : objects)
 		o->draw();
 
-//	DrawSwordPlaine();
+	DrawSwordPlaine();
 
 	glutSwapBuffers();
 }
@@ -135,7 +135,7 @@ void idle()
 		o->update(deltaTime);
 
 	for (GameObject* o : objects) {
-		if (o->detectCollision()) 
+		if (DetectCollision(*o)) 
 			objects.remove(o);
 	}
 

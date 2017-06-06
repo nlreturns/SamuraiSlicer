@@ -5,10 +5,8 @@ plaine SwordPlaine;
 
 // Returns true if the GameObject colides with the sword plaine
 bool DetectCollision(GameObject object) {
-	return (
-		((object.position.x >= SwordPlaine.topX1) && (object.position.x <= SwordPlaine.topX2)) && 
-		((object.position.y <= SwordPlaine.topY1) && (object.position.y >= SwordPlaine.topY2))
-		);
+	return (((object.position.x >= SwordPlaine.topX1) && (object.position.x <= SwordPlaine.topX2)) && 
+		((object.position.y >= SwordPlaine.topY1) && (object.position.y <= SwordPlaine.downY1)));
 }
 
 // Draws a plaine between 2 frames
@@ -16,13 +14,13 @@ void DrawSwordPlaine() {
 
 	SwordPlaine = {
 		0,
-		1,
+		5,
 		0,
-		1,
+		5,
 		0,
 		0,
-		1,
-		1
+		5,
+		5
 	};
 
 	glBegin(GL_QUADS);
