@@ -1,16 +1,27 @@
 #include "SwordDetection.h"
 
+//func def
+int readCam();
+void findFirstPixel(cv::Mat, int *, int *);
+void findLastPixel(cv::Mat, int *, int *);
 
 plaine SwordPlaine;
 
 // Returns true if the GameObject colides with the sword plaine
 bool DetectCollision(GameObject object) {
+
+	if (SwordPlaine.topX1 < SwordPlaine.topX2) {
+		return (((object.position.x <= SwordPlaine.topX1) && (object.position.x <= SwordPlaine.topX2)) &&
+			((object.position.y >= SwordPlaine.topY1) && (object.position.y <= SwordPlaine.downY1)));
+	}
 	return (((object.position.x >= SwordPlaine.topX1) && (object.position.x <= SwordPlaine.topX2)) && 
 		((object.position.y >= SwordPlaine.topY1) && (object.position.y <= SwordPlaine.downY1)));
 }
 
 // Draws a plaine between 2 frames
-void DrawSwordPlaine() {
+void DrawSwordPlaine(int fx, int fy, int lx, int ly) {
+
+
 
 	SwordPlaine = {
 		0,
@@ -37,11 +48,15 @@ int readCam()
 {
 	cv::VideoCapture cap(1);
 
-	// Controle of de camera wordt herkend.
+	// tries to open 1 of the 2 camera's
 	if (!cap.isOpened())
 	{
-		std::cout << "Cannot open the video cam" << std::endl;
-		return -1;
+		cv::VideoCapture cap(0);
+		if (!cap.isOpened())
+		{
+			std::cout << "Can't open cam exiting" << std::endl;
+			exit(0);
+		}
 	}
 
 	// Breedte en hooogte van de frames die de camera genereert ophalen. 
@@ -51,14 +66,11 @@ int readCam()
 
 	// Window maken waarin de beelden "live" getoond worden
 	cv::namedWindow("SamuraiSlicer", CV_WINDOW_AUTOSIZE);
-	cv::namedWindow("Channel 1", CV_WINDOW_AUTOSIZE);
-	cv::namedWindow("Channel 2", CV_WINDOW_AUTOSIZE);
+	cv::namedWindow("Sword 1", CV_WINDOW_AUTOSIZE);
 
 	// Continue loop waarin een beeld wordt opgehaald en wordt getoond in het window
-	cv::Mat frame, nonFlipped, hsvFrame, grayFrame;
-	cv::Mat upperRed, lowerRed, sword;
-	//testcode
-	cv::namedWindow("SWORD", CV_WINDOW_AUTOSIZE);
+	cv::Mat frame, nonFlipped, hsvFrame, rgbFrame;
+	cv::Mat redChannel[3], saturationChannel[3], redValue, satValue,sword;
 
 	while (1)
 	{
@@ -75,26 +87,31 @@ int readCam()
 		//flips frame
 		flip(nonFlipped, frame, 1);
 
-		//get grayscale and hls from original
-		cvtColor(frame, hsvFrame, CV_BGR2HLS);
-		cvtColor(frame, grayFrame, CV_BGR2GRAY);
+		//get saturation channel
+		cvtColor(frame, hsvFrame, CV_RGB2HSV);
+		split(hsvFrame, saturationChannel);
 
-		//threshold color red
-		//140-200
-		//0-255
-		inRange(hsvFrame, cv::Scalar(160,80, 100), cv::Scalar(180, 160, 255), upperRed);
-		inRange(hsvFrame, cv::Scalar(0, 160, 100), cv::Scalar(10, 255, 255), lowerRed);
+		// get red channel
+		split(frame, redChannel);
 
-		//testcode
+		//thresholds channels
+		threshold(redChannel[2], redValue, 220, 255, CV_THRESH_BINARY);
+		threshold(saturationChannel[1], satValue, 160, 255, CV_THRESH_BINARY);
 
-		imshow("Channel 1", upperRed);
-		imshow("Channel 2", lowerRed);
+		//multiplies thresholded channels
+		multiply(redValue, satValue, sword, 1.0, -1);
 
+		//testcode show image
+		//imshow("Sword", sword);
+		//imshow("SamuraiSlicer", frame);
 
+		int fx, fy;
+		int lx, ly;
+		findFirstPixel(sword, &fx, &fy);
+		findLastPixel(sword, &lx, &ly);
 
-		//imshow("SWORD", sword);
+		DrawSwordPlaine(fx, fy, lx, ly);
 
-		imshow("SamuraiSlicer", frame);
 		//  Wacht 30 ms op ESC-toets. Als ESC-toets is ingedrukt verlaat dan de loop
 		if (cv::waitKey(1) == 27)
 		{
@@ -104,4 +121,50 @@ int readCam()
 	}
 	return 0;
 
+}
+
+void findFirstPixel(cv::Mat m, int * fY, int * fX)
+{
+	bool found = false;
+	for (int y = 0; y < m.rows; y++)
+	{
+		for (int x = 0; x < m.cols; x++)
+		{
+			int value = m.at<unsigned char>(y, x);
+			//cout << value << endl;
+
+			if (value != 0)
+			{
+				std::cout << " First: y = " << y << " X = " << x << "Value = " << std::endl;
+				found = true;
+			}
+			if (found)
+				break;
+		}
+		if (found)
+			break;
+	}
+}
+
+void findLastPixel(cv::Mat m, int * lY, int * lX)
+{
+	bool found = false;
+	for (int y = m.rows - 1; y >= 0; y--)
+	{
+		for (int x = m.cols - 1; x >= 0; x--)
+		{
+			int value = m.at<unsigned char>(y, x);
+			//cout << value << endl;
+
+			if (value != 0)
+			{
+				std::cout << "Last: y = " << y << " X = " << x << "Value = " << std::endl;
+				found = true;
+			}
+			if (found)
+				break;
+		}
+		if (found)
+			break;
+	}
 }

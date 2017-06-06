@@ -15,41 +15,10 @@
 
 int height = 800;
 int width = 1200;
-bool isStarted = false;
 int timeElapsed = 0;
 int spawnTime = 3000;
 
 std::list<GameObject*> objects;
-irrklang::ISoundEngine* engine;
-
-void playSounds(int nr)
-{
-	if (nr == 0)
-		engine->play2D("Sounds/click.mp3", false);
-	if (nr == 1)
-		engine->play2D("Sounds/SlicingSound.mp3", false);
-	if (nr == 2)
-		engine->play2D("Sounds/SamuraiSlicer.mp3", false);
-	if (nr == 3)
-		engine->play2D("Sounds/explosion.wav", false);
-}
-
-void playMusic(int nr)
-{
-	engine->stopAllSounds();
-
-	if (nr == 0)
-		engine->play2D("Sounds/OpeningShogun.mp3", true);
-	if (nr == 1)
-		engine->play2D("Sounds/MainMoyuru.mp3", true);
-	if (nr == 2)
-		engine->play2D("Sounds/NinjaBattle.mp3", true);
-	if (nr == 3)
-		engine->play2D("Sounds/OutroYuunagi.mp3", true);
-	if (nr == 4)
-		engine->play2D("Sounds/MysteryShadowNinja.mp3", true);
-}
-
 
 void reshape(int w, int h)
 {
@@ -63,15 +32,6 @@ void keyboard(unsigned char key, int x, int  y)
 {
 	if (key == 27)
 		exit(0);
-	if (key == 49)
-		playMusic(0);
-	if (key == 50)
-		playMusic(1);
-	if (key == 51)
-		playMusic(2);
-	if (key == 52)
-		playMusic(3);
-	
 }
 
 GLuint background;
@@ -108,13 +68,13 @@ void initFruit() {
 	for (int i = 0; i < 500; i ++) {
 		GameObject* fruit = new GameObject();
 
-		int random = rand() % 3;
+		int random = rand() % 3;	
 		if (random == 0) 
 			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
 		else if (random == 1)
 			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
-		//else if (random == 2)
-		//	fruit->addComponent(ObjectComponent::build("models/lemon/lemon.obj"));
+		else if(random == 2)
+			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
 		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
@@ -304,14 +264,14 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("Samurai Slicer");
-	glutDisplayFunc(startMenu);
-	glutMouseFunc(mouseButton);
-	init();
+	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
+	init();
 //	readCam();
 	glutIdleFunc(idle);
 
 	glutMainLoop();
+
 	return 0;
 }
