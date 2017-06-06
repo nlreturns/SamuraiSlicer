@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 
 #include <windows.h>
 #include <gl/GL.h>
@@ -17,7 +18,10 @@ public:
 		glBindTexture(GL_TEXTURE_2D, textureId);
 
 		int width, height, depth;
-		unsigned char* data = stbi_load("texture.png", &width, &height, &depth, 4);
+		unsigned char* data = stbi_load(filename.c_str(), &width, &height, &depth, 4);
+
+		if(!data)
+			printf("Error loading texture %s: %s\n", filename.c_str(), stbi_failure_reason());	
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		stbi_image_free(data);
@@ -72,9 +76,12 @@ private:
 
 
 	void loadMaterialFile(const std::string &fileName, const std::string &dirName);
-public:
 	ObjectComponent(const std::string &filename);
+
+	static std::map<std::string, ObjectComponent*> objectCache;
+public:
 	~ObjectComponent(void);
+	static ObjectComponent* build(const std::string &fileName);
 
 	virtual void draw() override;
 };

@@ -4,7 +4,7 @@
 
 FallComponent::FallComponent()
 {
-	speed = 4.5f;
+	speed = 4.5;
 }
 
 
