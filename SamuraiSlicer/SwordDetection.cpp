@@ -9,6 +9,11 @@ plaine SwordPlaine;
 
 // Returns true if the GameObject colides with the sword plaine
 bool DetectCollision(GameObject object) {
+
+	if (SwordPlaine.topX1 < SwordPlaine.topX2) {
+		return (((object.position.x <= SwordPlaine.topX1) && (object.position.x <= SwordPlaine.topX2)) &&
+			((object.position.y >= SwordPlaine.topY1) && (object.position.y <= SwordPlaine.downY1)));
+	}
 	return (((object.position.x >= SwordPlaine.topX1) && (object.position.x <= SwordPlaine.topX2)) && 
 		((object.position.y >= SwordPlaine.topY1) && (object.position.y <= SwordPlaine.downY1)));
 }
