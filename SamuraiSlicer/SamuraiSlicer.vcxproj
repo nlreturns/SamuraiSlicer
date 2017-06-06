@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>freeglut/include;C:\Users\Jairo\Documents\GitHub\SamuraiSlicer\SamuraiSlicer\irrKlang-64bit-1.5.0\include;C:\opencv\build\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>freeglut/include;C:\opencv\build\include;irrKlang-64bit-1.5.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,12 +143,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>freeglut/include;C:\opencv\build\include;irrKlang-64bit-1.5.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>freeglut/lib/x64;C:\opencv\build\x64\vc14\lib;irrKlang-64bit-1.5.0\lib\Winx64-visualStudio;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;opencv_world310d.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -161,6 +164,7 @@
     <ClCompile Include="ObjectComponent.cpp" />
     <ClCompile Include="Sounds.cpp" />
     <ClCompile Include="SpinComponent.cpp" />
+    <ClCompile Include="SwordDetection.cpp" />
     <ClCompile Include="Vec.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,11 +172,11 @@
     <ClInclude Include="CubeComponent.h" />
     <ClInclude Include="DrawComponent.h" />
     <ClInclude Include="FallComponent.h" />
-    <ClInclude Include="irrKlang.h" />
     <ClInclude Include="ObjectComponent.h" />
     <ClInclude Include="Sounds.h" />
     <ClInclude Include="SpinComponent.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="SwordDetection.h" />
     <ClInclude Include="Vec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -6,21 +6,19 @@
 #include "CubeComponent.h"
 #include "ObjectComponent.h"
 #include "SpinComponent.h"
+#include "SwordDetection.h"
 #include "FallComponent.h"
 #include <irrKlang.h>
 #include "Sounds.h"
 
-
-
-
 int height = 800;
 int width = 1200;
 bool isStarted = false;
+int timeElapsed = 0;
+int spawnTime = 3000;
 
 std::list<GameObject*> objects;
 irrklang::ISoundEngine* engine;
-
-
 
 void playSounds(int nr)
 {
@@ -65,6 +63,12 @@ void keyboard(unsigned char key, int x, int  y)
 		exit(0);
 	if (key == 49)
 		playMusic(0);
+	if (key == 50)
+		playMusic(1);
+	if (key == 51)
+		playMusic(2);
+	if (key == 52)
+		playMusic(3);
 	
 }
 
@@ -101,37 +105,23 @@ void loadStartscreen() {
 
 void initFruit() {
 
-	GameObject* apple = new GameObject();
-	apple->addComponent(new ObjectComponent("models/appeltje/appeltje.obj"));
-	apple->addComponent(new SpinComponent(40.0f));
-	apple->addComponent(new FallComponent());
-	apple->position = Vec3f(0.0f, 15.0f, 0.0f);
-	objects.push_back(apple);
+	for (int i = 0; i < 500; i ++) {
+		GameObject* fruit = new GameObject();
 
-	GameObject* banana = new GameObject();
-	banana->addComponent(new ObjectComponent("models/banaan/banaan.obj"));
-	banana->addComponent(new SpinComponent(40.0f));
-	banana->addComponent(new FallComponent());
-	banana->position = Vec3f(3.0f, 19.0f, 0.0f);
-	objects.push_back(banana);
-}
+		int random = rand() % 3;
+		if (random == 0) 
+			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
+		else if (random == 1)
+			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
+		else if (random == 2)
+			fruit->addComponent(ObjectComponent::build("models/lemon/lemon.obj"));
+		fruit->addComponent(new SpinComponent(rand()%40+20));
+		fruit->addComponent(new FallComponent());
+		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
 
+		objects.push_back(fruit);
+	}
 
-void initAppeltje() {
-	GameObject* apple = new GameObject();
-	apple->addComponent(new ObjectComponent("models/banaan/banaanB.obj"));
-	apple->addComponent(new SpinComponent(40.0f));
-	apple->addComponent(new FallComponent());
-	apple->position = Vec3f(0.0f, 15.0f, 0.0f);
-	objects.push_back(apple);
-
-
-	GameObject* appe = new GameObject();
-	appe->addComponent(new ObjectComponent("models/banaan/banaanO.obj"));
-	appe->addComponent(new SpinComponent(40.0f));
-	appe->addComponent(new FallComponent());
-	appe->position = Vec3f(0.0f, 15.0f, 0.0f);
-	objects.push_back(appe);
 }
 
 void init()
@@ -140,8 +130,7 @@ void init()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	
-	//initFruit();
-	initAppeltje();
+	initFruit();
 
 	loadStartscreen();
 }
@@ -184,20 +173,30 @@ void display()
 	for (auto &o : objects)
 		o->draw();
 
+	DrawSwordPlaine();
 
 	glutSwapBuffers();
 }
 
 int lastTime = 0;
+bool firstTime = true;
 void idle()
 {
 	int currentTime = glutGet(GLUT_ELAPSED_TIME);
+	if (firstTime) {
+		firstTime = false;
+		lastTime = currentTime;
+	}
 	float deltaTime = (currentTime - lastTime) / 1000.0f;
 	lastTime = currentTime;
 
 	for (auto &o : objects)
 		o->update(deltaTime);
 
+	for (GameObject* o : objects) {
+		if (DetectCollision(*o)) 
+			objects.remove(o);
+	}
 
 	glutPostRedisplay();
 }
@@ -213,12 +212,6 @@ void mouseButton(int button, int state, int x, int y) {
 		isStarted = true;
 	}
 }
-
-
-
-
-
-
 
 void startMenu() {
 	glClearColor(0.4f, 0.4f, 0.4f, 1);
@@ -271,7 +264,11 @@ int main(int argc, char* argv[])
 	glutDisplayFunc(startMenu);
 	glutMouseFunc(mouseButton);
 	init();
-	
+	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
+	init();
+//	readCam();
+	glutIdleFunc(idle);
 
 	glutMainLoop();
 	return 0;
