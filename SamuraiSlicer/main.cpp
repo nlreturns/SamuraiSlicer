@@ -8,6 +8,8 @@
 #include "SpinComponent.h"
 #include "SwordDetection.h"
 #include "FallComponent.h"
+#include "UpperComponent.h"
+#include "LowerComponent.h"
 #include <irrKlang.h>
 #include "Sounds.h"
 
@@ -92,7 +94,7 @@ void loadStartscreen() {
 	glBindTexture(GL_TEXTURE_2D, background);
 
 	int width, height, depth;
-	unsigned char* data = stbi_load("images/startscreen.png", &width, &height, &depth, 4);
+	unsigned char* data = stbi_load("images/samuraislicer.jpg", &width, &height, &depth, 4);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	stbi_image_free(data);
@@ -111,8 +113,8 @@ void initFruit() {
 			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
 		else if (random == 1)
 			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
-		else if (random == 2)
-			fruit->addComponent(ObjectComponent::build("models/lemon/lemon.obj"));
+		//else if (random == 2)
+		//	fruit->addComponent(ObjectComponent::build("models/lemon/lemon.obj"));
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
 		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
@@ -132,7 +134,7 @@ void init()
 	playMusic(0);
 
 	loadStartscreen();
-	initFruit();
+	
 }
 
 void display()
@@ -177,6 +179,7 @@ void display()
 	glutSwapBuffers();
 }
 
+
 int lastTime = 0;
 bool firstTime = true;
 void idle()
@@ -193,8 +196,36 @@ void idle()
 		o->update(deltaTime);
 
 	for (GameObject* o : objects) {
-		if (DetectCollision(*o)) 
+		if (DetectCollision(*o) && o->collision) {	
+			GameObject* upper = new GameObject();
+			GameObject* lower = new GameObject();
+
+			
+			upper->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
+			lower->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
+			
+			upper->addComponent(new SpinComponent(rand() % 40 + 20));
+			lower->addComponent(new SpinComponent(rand() % 40 + 20));
+			upper->position = o->position;
+			lower->position = o->position;
+
+			upper->addComponent(new UpperComponent());
+			lower->addComponent(new LowerComponent());
+
+			upper->collision = false;
+			lower->collision = false;
+
 			objects.remove(o);
+			objects.push_back(upper);
+			objects.push_back(lower);			
+		}
+		else if(!o->collision){
+			o->count++;
+			if (o->count > 10) {
+				objects.remove(o);
+			}
+		}
+			
 	}
 
 	glutPostRedisplay();
@@ -206,7 +237,9 @@ void mouseButton(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && isStarted == false) {
 		glutDisplayFunc(display);
 		glutIdleFunc(idle);
+		playSounds(2);
 		loadBackground();
+		initFruit();
 		isStarted = true;
 	}
 }
