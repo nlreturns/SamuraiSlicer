@@ -7,7 +7,7 @@ class FallComponent : public Component
 	float speed;
 public:
 	FallComponent();
-	FallComponent(float speed);
+	FallComponent(float speedVar);
 	~FallComponent();
 
 	virtual void update(float elapsedTime) override;
