@@ -52,9 +52,9 @@ void initFruit() {
 
 		int random = rand() % 3;	
 		if (random == 0) 
-			fruit->addComponent(ObjectComponent::build("models/citroen/citroenBovenkant.obj"));
+			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
 		else if (random == 1)
-			fruit->addComponent(ObjectComponent::build("models/citroen/citroenOnderkant.obj"));
+			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
 		else if(random == 2)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
 		fruit->addComponent(new SpinComponent(rand()%40+20));
