@@ -7,11 +7,48 @@
 #include "ObjectComponent.h"
 #include "SpinComponent.h"
 #include "FallComponent.h"
+#include <irrKlang.h>
+#include "Sounds.h"
+
+
+
 
 int height = 800;
 int width = 1200;
 
 std::list<GameObject*> objects;
+irrklang::ISoundEngine* engine;
+
+
+
+void playSounds(int nr)
+{
+	if (nr == 0)
+		engine->play2D("Sounds/click.mp3", false);
+	if (nr == 1)
+		engine->play2D("Sounds/SlicingSound.mp3", false);
+	if (nr == 2)
+		engine->play2D("Sounds/SamuraiSlicer.mp3", false);
+	if (nr == 3)
+		engine->play2D("Sounds/explosion.wav", false);
+}
+
+void playMusic(int nr)
+{
+	engine->stopAllSounds();
+
+	if (nr == 0)
+		engine->play2D("Sounds/OpeningShogun.mp3", true);
+	if (nr == 1)
+		engine->play2D("Sounds/MainMoyuru.mp3", true);
+	if (nr == 2)
+		engine->play2D("Sounds/NinjaBattle.mp3", true);
+	if (nr == 3)
+		engine->play2D("Sounds/OutroYuunagi.mp3", true);
+	if (nr == 4)
+		engine->play2D("Sounds/MysteryShadowNinja.mp3", true);
+}
+
 
 void reshape(int w, int h)
 {
@@ -25,6 +62,9 @@ void keyboard(unsigned char key, int x, int  y)
 {
 	if (key == 27)
 		exit(0);
+	if (key == 49)
+		playMusic(0);
+	
 }
 
 GLuint background;
@@ -149,8 +189,15 @@ void mouseButton(int button, int state, int x, int y) {
 		glutIdleFunc(idle);
 		glutReshapeFunc(reshape);
 		glutKeyboardFunc(keyboard);
+	
 	}
 }
+
+
+
+
+
+
 
 void startMenu() {
 	glClearColor(0.4f, 0.4f, 0.4f, 1);
@@ -193,6 +240,9 @@ void startMenu() {
 
 int main(int argc, char* argv[])
 {
+	engine = irrklang::createIrrKlangDevice();
+	playMusic(0);
+
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
@@ -200,8 +250,8 @@ int main(int argc, char* argv[])
 	glutDisplayFunc(startMenu);
 	glutMouseFunc(mouseButton);
 	init();
+	
 
 	glutMainLoop();
-
 	return 0;
 }
