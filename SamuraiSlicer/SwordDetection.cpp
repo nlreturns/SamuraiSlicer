@@ -14,7 +14,9 @@ bool DetectCollision(GameObject object) {
 }
 
 // Draws a plaine between 2 frames
-void DrawSwordPlaine() {
+void DrawSwordPlaine(int fx, int fy, int lx, int ly) {
+
+
 
 	SwordPlaine = {
 		0,
@@ -47,7 +49,7 @@ int readCam()
 		cv::VideoCapture cap(0);
 		if (!cap.isOpened())
 		{
-			cout << "Can't open cam exiting" << endl;
+			std::cout << "Can't open cam exiting" << std::endl;
 			exit(0);
 		}
 	}
@@ -95,13 +97,15 @@ int readCam()
 		multiply(redValue, satValue, sword, 1.0, -1);
 
 		//testcode show image
-		imshow("Sword", sword);
-		imshow("SamuraiSlicer", frame);
+		//imshow("Sword", sword);
+		//imshow("SamuraiSlicer", frame);
 
 		int fx, fy;
 		int lx, ly;
-		findFirstPixel(sword, &x, &y);
-		findLastPixel(sword, &x, &y);
+		findFirstPixel(sword, &fx, &fy);
+		findLastPixel(sword, &lx, &ly);
+
+		DrawSwordPlaine(fx, fy, lx, ly);
 
 		//  Wacht 30 ms op ESC-toets. Als ESC-toets is ingedrukt verlaat dan de loop
 		if (cv::waitKey(1) == 27)
@@ -126,7 +130,7 @@ void findFirstPixel(cv::Mat m, int * fY, int * fX)
 
 			if (value != 0)
 			{
-				cout << " First: y = " << y << " X = " << x << "Value = " << endl;
+				std::cout << " First: y = " << y << " X = " << x << "Value = " << std::endl;
 				found = true;
 			}
 			if (found)
@@ -149,7 +153,7 @@ void findLastPixel(cv::Mat m, int * lY, int * lX)
 
 			if (value != 0)
 			{
-				cout << "Last: y = " << y << " X = " << x << "Value = " << endl;
+				std::cout << "Last: y = " << y << " X = " << x << "Value = " << std::endl;
 				found = true;
 			}
 			if (found)
