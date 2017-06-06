@@ -25,6 +25,27 @@ void reshape(int w, int h)
 	glutPostRedisplay();
 }
 
+void printScore(char *st)
+{
+	int l, i;
+
+	l = strlen(st);
+	glRasterPos3f(-3.1f, 1.9f, 4.9f);
+
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'S');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'C');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'O');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'R');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'E');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+	for (i = 0; i < l; i++) // loop until i is greater then l
+	{
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, st[i]);
+	}
+
+}
+
 void keyboard(unsigned char key, int x, int  y)
 {
 	if (key == 27)
@@ -105,11 +126,11 @@ void display()
 	gluLookAt(0, 0, 7,
 			  0, 0, 0,
 			  0, 1, 0);
-
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHTING);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
+	printScore("420"); // Print score to screen
 	for (auto &o : objects)
 		o->draw();
 
