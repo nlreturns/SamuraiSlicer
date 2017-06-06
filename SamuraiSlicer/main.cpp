@@ -130,6 +130,8 @@ void init()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	
+	engine = irrklang::createIrrKlangDevice();
+	playMusic(0);
 	initFruit();
 
 	loadStartscreen();
@@ -254,9 +256,6 @@ void startMenu() {
 
 int main(int argc, char* argv[])
 {
-	engine = irrklang::createIrrKlangDevice();
-	playMusic(0);
-
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
@@ -266,7 +265,6 @@ int main(int argc, char* argv[])
 	init();
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
-	init();
 //	readCam();
 	glutIdleFunc(idle);
 
