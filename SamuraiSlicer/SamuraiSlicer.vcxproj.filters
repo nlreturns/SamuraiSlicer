@@ -36,13 +36,16 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SwordDetection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FallComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sounds.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SwordDetection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,13 +68,16 @@
     <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SwordDetection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FallComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sounds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SwordDetection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
