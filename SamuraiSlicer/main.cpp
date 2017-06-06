@@ -8,46 +8,13 @@
 #include "SpinComponent.h"
 #include "SwordDetection.h"
 #include "FallComponent.h"
-#include <irrKlang.h>
-#include "Sounds.h"
 
 int height = 800;
 int width = 1200;
-bool isStarted = false;
 int timeElapsed = 0;
 int spawnTime = 3000;
 
 std::list<GameObject*> objects;
-irrklang::ISoundEngine* engine;
-
-void playSounds(int nr)
-{
-	if (nr == 0)
-		engine->play2D("Sounds/click.mp3", false);
-	if (nr == 1)
-		engine->play2D("Sounds/SlicingSound.mp3", false);
-	if (nr == 2)
-		engine->play2D("Sounds/SamuraiSlicer.mp3", false);
-	if (nr == 3)
-		engine->play2D("Sounds/explosion.wav", false);
-}
-
-void playMusic(int nr)
-{
-	engine->stopAllSounds();
-
-	if (nr == 0)
-		engine->play2D("Sounds/OpeningShogun.mp3", true);
-	if (nr == 1)
-		engine->play2D("Sounds/MainMoyuru.mp3", true);
-	if (nr == 2)
-		engine->play2D("Sounds/NinjaBattle.mp3", true);
-	if (nr == 3)
-		engine->play2D("Sounds/OutroYuunagi.mp3", true);
-	if (nr == 4)
-		engine->play2D("Sounds/MysteryShadowNinja.mp3", true);
-}
-
 
 void reshape(int w, int h)
 {
@@ -61,15 +28,6 @@ void keyboard(unsigned char key, int x, int  y)
 {
 	if (key == 27)
 		exit(0);
-	if (key == 49)
-		playMusic(0);
-	if (key == 50)
-		playMusic(1);
-	if (key == 51)
-		playMusic(2);
-	if (key == 52)
-		playMusic(3);
-	
 }
 
 GLuint background;
@@ -87,34 +45,18 @@ void loadBackground() {
 }
 
 
-void loadStartscreen() {
-	glGenTextures(1, &background);
-	glBindTexture(GL_TEXTURE_2D, background);
-
-	int width, height, depth;
-	unsigned char* data = stbi_load("images/startscreen.png", &width, &height, &depth, 4);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	stbi_image_free(data);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-}
-
-
 void initFruit() {
 
 	for (int i = 0; i < 500; i ++) {
 		GameObject* fruit = new GameObject();
 
-		int random = rand() % 4;	
+		int random = rand() % 3;	
 		if (random == 0) 
-			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
+			fruit->addComponent(ObjectComponent::build("models/citroen/citroenBovenkant.obj"));
 		else if (random == 1)
-			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
+			fruit->addComponent(ObjectComponent::build("models/citroen/citroenOnderkant.obj"));
 		else if(random == 2)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
-		else if (random == 3)
-			fruit->addComponent(ObjectComponent::build("models/bom/bom.obj"));
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
 		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
@@ -130,10 +72,9 @@ void init()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	
-	engine = irrklang::createIrrKlangDevice();
-	playMusic(0);
+	initFruit();
 
-	loadStartscreen();
+	loadBackground();
 }
 
 void display()
@@ -173,7 +114,7 @@ void display()
 	for (auto &o : objects)
 		o->draw();
 
-//	DrawSwordPlaine();
+	//DrawSwordPlaine();
 
 	glutSwapBuffers();
 }
@@ -202,70 +143,20 @@ void idle()
 }
 
 
-void mouseButton(int button, int state, int x, int y) {
-	// only start motion if the left button is pressed
-	if (button == GLUT_LEFT_BUTTON && isStarted == false) {
-		glutDisplayFunc(display);
-		glutIdleFunc(idle);
-		loadBackground();
-		initFruit();
-		isStarted = true;
-	}
-}
-
-void startMenu() {
-	glClearColor(0.4f, 0.4f, 0.4f, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, width, height, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, background);
-	glColor4f(1, 1, 1, 1);
-	glDisable(GL_LIGHTING);
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
-	glTexCoord2f(0, 1); glVertex3f(0, height, 0);
-	glTexCoord2f(1, 1); glVertex3f(width, height, 0);
-	glTexCoord2f(1, 0); glVertex3f(width, 0, 0);
-	glEnd();
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(90.0f, (float)width / (float)height, 0.1f, 500.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0, 0, 7,
-		0, 0, 0,
-		0, 1, 0);
-
-	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_LIGHTING);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-
-
-	glutSwapBuffers();
-}
-
-
 int main(int argc, char* argv[])
 {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("Samurai Slicer");
-	glutDisplayFunc(startMenu);
-	glutMouseFunc(mouseButton);
-	init();
+	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
+	init();
 //	readCam();
 	glutIdleFunc(idle);
 
 	glutMainLoop();
+
 	return 0;
 }
