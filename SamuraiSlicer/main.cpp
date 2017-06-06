@@ -132,7 +132,6 @@ void init()
 	playMusic(0);
 
 	loadStartscreen();
-	initFruit();
 }
 
 void display()
@@ -172,7 +171,7 @@ void display()
 	for (auto &o : objects)
 		o->draw();
 
-	DrawSwordPlaine();
+//	DrawSwordPlaine();
 
 	glutSwapBuffers();
 }
@@ -207,6 +206,7 @@ void mouseButton(int button, int state, int x, int y) {
 		glutDisplayFunc(display);
 		glutIdleFunc(idle);
 		loadBackground();
+		initFruit();
 		isStarted = true;
 	}
 }
