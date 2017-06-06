@@ -87,8 +87,6 @@ void loadBackground() {
 }
 
 
-
-GLuint startscreen;
 void loadStartscreen() {
 	glGenTextures(1, &background);
 	glBindTexture(GL_TEXTURE_2D, background);
@@ -132,14 +130,13 @@ void init()
 	
 	engine = irrklang::createIrrKlangDevice();
 	playMusic(0);
-	initFruit();
 
 	loadStartscreen();
+	initFruit();
 }
 
 void display()
 {
-	loadBackground();
 	glClearColor(0.4f, 0.4f, 0.4f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
@@ -209,8 +206,7 @@ void mouseButton(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && isStarted == false) {
 		glutDisplayFunc(display);
 		glutIdleFunc(idle);
-		glutReshapeFunc(reshape);
-		glutKeyboardFunc(keyboard);
+		loadBackground();
 		isStarted = true;
 	}
 }
