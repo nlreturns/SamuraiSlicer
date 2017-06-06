@@ -18,6 +18,6 @@ struct plaine {
 };
 
 
-void DrawSwordPlaine(void);
+void DrawSwordPlaine(int fx, int fy, int lx, int ly);
 bool DetectCollision(GameObject object);
 int readCam(void);
