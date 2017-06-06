@@ -15,6 +15,7 @@
 
 int height = 800;
 int width = 1200;
+bool isStarted = false;
 
 std::list<GameObject*> objects;
 irrklang::ISoundEngine* engine;
@@ -115,13 +116,32 @@ void initFruit() {
 	objects.push_back(banana);
 }
 
+
+void initAppeltje() {
+	GameObject* apple = new GameObject();
+	apple->addComponent(new ObjectComponent("models/banaan/banaanB.obj"));
+	apple->addComponent(new SpinComponent(40.0f));
+	apple->addComponent(new FallComponent());
+	apple->position = Vec3f(0.0f, 15.0f, 0.0f);
+	objects.push_back(apple);
+
+
+	GameObject* appe = new GameObject();
+	appe->addComponent(new ObjectComponent("models/banaan/banaanO.obj"));
+	appe->addComponent(new SpinComponent(40.0f));
+	appe->addComponent(new FallComponent());
+	appe->position = Vec3f(0.0f, 15.0f, 0.0f);
+	objects.push_back(appe);
+}
+
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	
-	initFruit();
+	//initFruit();
+	initAppeltje();
 
 	loadStartscreen();
 }
@@ -178,18 +198,19 @@ void idle()
 	for (auto &o : objects)
 		o->update(deltaTime);
 
+
 	glutPostRedisplay();
 }
 
 
 void mouseButton(int button, int state, int x, int y) {
 	// only start motion if the left button is pressed
-	if (button == GLUT_LEFT_BUTTON) {
+	if (button == GLUT_LEFT_BUTTON && isStarted == false) {
 		glutDisplayFunc(display);
 		glutIdleFunc(idle);
 		glutReshapeFunc(reshape);
 		glutKeyboardFunc(keyboard);
-	
+		isStarted = true;
 	}
 }
 
