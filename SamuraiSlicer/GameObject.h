@@ -6,6 +6,8 @@
 class Component;
 class DrawComponent;
 
+
+
 class GameObject
 {
 	DrawComponent* drawComponent = nullptr;
@@ -19,11 +21,14 @@ public:
 	Vec3f position;
 	Vec3f rotation;
 	Vec3f scale = Vec3f(1,1,1);
+	bool collision = true;
+	int count = 0;
+	int index;
+	
 
 
 	void addComponent(Component* component);
 	void update(float elapsedTime);
-	bool detectCollision();
 	void draw();
 };
 
