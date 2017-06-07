@@ -17,8 +17,18 @@ int height = 800;
 int width = 1200;
 int timeElapsed = 0;
 int spawnTime = 3000;
+int score = 0;
+bool isStarted = false;
+
+int fx, fy;
+int lx, ly;
 
 std::list<GameObject*> objects;
+irrklang::ISoundEngine* engine;
+
+cv::VideoCapture cap(1);
+cv::Mat frame, nonFlipped, hsvFrame, rgbFrame;
+cv::Mat redChannel[3], saturationChannel[3], redValue, satValue, sword;
 
 void reshape(int w, int h)
 {
@@ -28,10 +38,64 @@ void reshape(int w, int h)
 	glutPostRedisplay();
 }
 
+void playSounds(int nr)
+{
+	if (nr == 0)
+		engine->play2D("Sounds/click.mp3", false);
+	if (nr == 1)
+		engine->play2D("Sounds/SlicingSound.mp3", false);
+	if (nr == 2)
+		engine->play2D("Sounds/SamuraiSlicer.mp3", false);
+	if (nr == 3)
+		engine->play2D("Sounds/explosion.wav", false);
+}
+
+void playMusic(int nr)
+{
+	engine->stopAllSounds();
+
+	if (nr == 0)
+		engine->play2D("Sounds/OpeningShogun.mp3", true);
+	if (nr == 1)
+		engine->play2D("Sounds/MainMoyuru.mp3", true);
+	if (nr == 2)
+		engine->play2D("Sounds/NinjaBattle.mp3", true);
+	if (nr == 3)
+		engine->play2D("Sounds/OutroYuunagi.mp3", true);
+	if (nr == 4)
+		engine->play2D("Sounds/MysteryShadowNinja.mp3", true);
+}
+
+void printScore(int s)
+{
+	char score[32];
+	_itoa_s(s, score, 10);
+	int lenght = floor(log10(abs(s))) + 1;
+	glRasterPos3f(-3.1f, 1.9f, 4.9f);
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'S');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'C');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'O');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'R');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'E');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
+	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+	if (s == 0) {glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');}
+	else {for (int i = 0; i < lenght; i++)
+		{glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, score[i]);}}
+}
+
 void keyboard(unsigned char key, int x, int  y)
 {
 	if (key == 27)
 		exit(0);
+	if (key == 49)
+		playMusic(0);
+	if (key == 50)
+		playMusic(1);
+	if (key == 51)
+		playMusic(2);
+	if (key == 52)
+		playMusic(3);
 }
 
 GLuint background;
@@ -48,6 +112,9 @@ void loadBackground() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
+void loadStartscreen() {
+	glGenTextures(1, &background);
+	glBindTexture(GL_TEXTURE_2D, background);
 
 void loadStartscreen() {
 	glGenTextures(1, &background);
@@ -65,6 +132,13 @@ void loadStartscreen() {
 
 void initFruit() {
 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	stbi_image_free(data);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+void initFruit() {
 	for (int i = 0; i < 500; i ++) {
 		GameObject* fruit = new GameObject();
 
@@ -81,7 +155,11 @@ void initFruit() {
 
 		objects.push_back(fruit);
 	}
+}
 
+void camInit() 
+{
+	cv::namedWindow("SamuraiSlicer", CV_WINDOW_AUTOSIZE);
 }
 
 void init()
@@ -92,6 +170,10 @@ void init()
 	
 	engine = irrklang::createIrrKlangDevice();
 	playMusic(0);
+
+	engine = irrklang::createIrrKlangDevice();
+	playMusic(0);
+	camInit();
 
 	loadStartscreen();
 	
@@ -126,19 +208,52 @@ void display()
 	gluLookAt(0, 0, 7,
 			  0, 0, 0,
 			  0, 1, 0);
-
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHTING);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
+	printScore(score); // Print score to screen
 	for (auto &o : objects)
 		o->draw();
 
-	DrawSwordPlaine();
+	DrawSwordPlaine(fx, fy, lx, ly);
 
 	glutSwapBuffers();
 }
 
+void CamLoop()
+{
+	// Lees een nieuw frame
+	bool bSuccess = cap.read(nonFlipped);
+
+	// Controlleer of het frame goed gelezen is.
+	if (!bSuccess)
+	{
+		std::cout << "Cannot read a frame from video stream" << std::endl;
+	}
+	//flips frame
+	flip(nonFlipped, frame, 1);
+
+	//get saturation channel
+	cvtColor(frame, hsvFrame, CV_RGB2HSV);
+	split(hsvFrame, saturationChannel);
+
+	// get red channel
+	split(frame, redChannel);
+
+	//thresholds channels
+	threshold(redChannel[2], redValue, 220, 255, CV_THRESH_BINARY);
+	threshold(saturationChannel[1], satValue, 160, 255, CV_THRESH_BINARY);
+
+	//multiplies thresholded channels
+	multiply(redValue, satValue, sword, 1.0, -1);
+
+	imshow("SamuraiSlicer", sword);
+
+	findFirstPixel(sword, &fx, &fy);
+	findLastPixel(sword, &lx, &ly);
+
+}
 
 int lastTime = 0;
 bool firstTime = true;
@@ -151,6 +266,8 @@ void idle()
 	}
 	float deltaTime = (currentTime - lastTime) / 1000.0f;
 	lastTime = currentTime;
+
+	CamLoop();
 
 	for (auto &o : objects)
 		o->update(deltaTime);
@@ -191,6 +308,15 @@ void idle()
 	glutPostRedisplay();
 }
 
+void mouseButton(int button, int state, int x, int y) {
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON && isStarted == false) {
+		glutDisplayFunc(display);
+		glutIdleFunc(idle);
+		loadBackground();
+		initFruit();
+		isStarted = true;
+	}
 
 void mouseButton(int button, int state, int x, int y) {
 	// only start motion if the left button is pressed
@@ -249,11 +375,11 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("Samurai Slicer");
-	glutDisplayFunc(display);
+	glutDisplayFunc(startMenu);
+	glutMouseFunc(mouseButton);
+	init();
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
-	init();
-//	readCam();
 	glutIdleFunc(idle);
 
 	glutMainLoop();
