@@ -86,6 +86,14 @@ void keyboard(unsigned char key, int x, int  y)
 {
 	if (key == 27)
 		exit(0);
+	if (key == 49)
+		playMusic(0);
+	if (key == 50)
+		playMusic(1);
+	if (key == 51)
+		playMusic(2);
+	if (key == 52)
+		playMusic(3);
 }
 
 GLuint background;
@@ -185,7 +193,7 @@ void display()
 	glEnable(GL_LIGHTING);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	//printScore(score); // Print score to screen
+	printScore(score); // Print score to screen
 	for (auto &o : objects)
 		o->draw();
 
@@ -226,7 +234,6 @@ void CamLoop()
 	findFirstPixel(sword, &fx, &fy);
 	findLastPixel(sword, &lx, &ly);
 
-
 }
 
 int lastTime = 0;
@@ -252,6 +259,8 @@ void idle()
 			score++;
 		}
 	}
+
+	glutPostRedisplay();
 }
 
 void mouseButton(int button, int state, int x, int y) {
@@ -267,6 +276,43 @@ void mouseButton(int button, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+void startMenu() {
+	glClearColor(0.4f, 0.4f, 0.4f, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, width, height, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, background);
+	glColor4f(1, 1, 1, 1);
+	glDisable(GL_LIGHTING);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
+	glTexCoord2f(0, 1); glVertex3f(0, height, 0);
+	glTexCoord2f(1, 1); glVertex3f(width, height, 0);
+	glTexCoord2f(1, 0); glVertex3f(width, 0, 0);
+	glEnd();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(90.0f, (float)width / (float)height, 0.1f, 500.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0, 0, 7,
+		0, 0, 0,
+		0, 1, 0);
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+
+
+	glutSwapBuffers();
+}
 
 int main(int argc, char* argv[])
 {
@@ -274,10 +320,11 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(width, height);
 	glutInit(&argc, argv);
 	glutCreateWindow("Samurai Slicer");
-	glutDisplayFunc(display);
+	glutDisplayFunc(startMenu);
+	glutMouseFunc(mouseButton);
+	init();
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
-	init();
 	glutIdleFunc(idle);
 
 	glutMainLoop();
