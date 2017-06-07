@@ -46,30 +46,20 @@ void DrawSwordPlaine(int fx, int fy, int lx, int ly) {
 		(ly / Yschaal / 7.0f)*-1
 	};
 
-	//SwordPlaine = {
-	//	fx / 19 -9.5f,
-	//	lx / 19 - 9.5f,
-	//	fx / 19 - 9.5f,
-	//	lx / 19 - 9.5f,
-	//	fy / 14 - 7.0f,
-	//	fy / 14 - 7.0f,
-	//	ly / 14 - 7.0f,
-	//	ly / 14 / 7.0f
-	//};
-
 	previousX1 = fx;
 	previousX2 = lx;
 	previousY1 = fy;
 	previousY2 = ly;
 
+	glDisable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
-	glColor3f(0, 0, 0);
-	glColor3d(0, 0, 0);
+	glColor4f(1, 1, 1, 1);
 	glVertex3f(SwordPlaine.topX1, SwordPlaine.topY1, 1);
 	glVertex3f(SwordPlaine.topX2, SwordPlaine.topY2, 1);
 	glVertex3f(SwordPlaine.downX2, SwordPlaine.downY2, 1);
 	glVertex3f(SwordPlaine.downX1, SwordPlaine.downY1, 1);
 	glEnd();
+	glEnable(GL_TEXTURE_2D);
 
 }
 
