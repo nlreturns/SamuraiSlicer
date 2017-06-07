@@ -12,6 +12,7 @@
 #include "LowerComponent.h"
 #include <irrKlang.h>
 #include "Sounds.h"
+#include "Main.h"
 
 int height = 800;
 int width = 1200;
@@ -93,51 +94,6 @@ void printScore(int s)
 		{glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, score[i]);}}
 }
 
-/**
- * print time left to play the game,
- * when the timer hits 0 call method @TODO
-*/
-void printTime() {
-	char timeLeft[32];
-	int substract = glutGet(GLUT_ELAPSED_TIME) - startTime;
-	time = (120000 - substract) / 1000;
-	_itoa_s(time, timeLeft, 10);
-
-	glRasterPos3f(2.0f, 1.9f, 4.9f);
-	std::string timeleft = "Time left: ";
-	for (char& c : timeleft) {
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
-	}
-	if (time == 0) {
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0'); 
-		// time is 0, call a method here.
-	}
-	else if(time < 60) { // time is lower than 60 seconds, print easy algorithm
-		length = floor(log10(abs(time))) + 1;
-		for (int i = 0; i < length; i++)
-			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, timeLeft[i]);
-	}
-	else { // time is higher than 60 seconds, print harder algorithm
-		char minutes[32];
-		_itoa_s(time / 60, minutes, 10);
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, minutes[0]);
-
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
-		//seconds
-		_itoa_s(time % 60, timeLeft, 10);
-		length = floor(log10(abs(time%60))) + 1;
-		for (int i = 0; i < length; i++) {
-			if (length < 2)
-				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
-			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, timeLeft[i]);
-		}
-		if (time % 60 == 0) {
-			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
-			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
-		}
-	}
-}
-
 void keyboard(unsigned char key, int x, int  y)
 {
 	if (key == 27)
@@ -177,6 +133,118 @@ void loadStartscreen() {
 	stbi_image_free(data);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+void loadVictoryscreen() {
+	glGenTextures(1, &background);
+	glBindTexture(GL_TEXTURE_2D, background);
+
+	int width, height, depth;
+	unsigned char* data = stbi_load("images/Victoryscreen.png", &width, &height, &depth, 4);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	stbi_image_free(data);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+void loadDefeatscreen() {
+	glGenTextures(1, &background);
+	glBindTexture(GL_TEXTURE_2D, background);
+
+	int width, height, depth;
+	unsigned char* data = stbi_load("images/Defeatscreen.png", &width, &height, &depth, 4);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	stbi_image_free(data);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+void startMenu() {
+	glClearColor(0.4f, 0.4f, 0.4f, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, width, height, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, background);
+	glColor4f(1, 1, 1, 1);
+	glDisable(GL_LIGHTING);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
+	glTexCoord2f(0, 1); glVertex3f(0, height, 0);
+	glTexCoord2f(1, 1); glVertex3f(width, height, 0);
+	glTexCoord2f(1, 0); glVertex3f(width, 0, 0);
+	glEnd();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(90.0f, (float)width / (float)height, 0.1f, 500.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0, 0, 7,
+		0, 0, 0,
+		0, 1, 0);
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+
+
+	glutSwapBuffers();
+}
+
+
+/**
+* print time left to play the game,
+* when the timer hits 0 call method @TODO
+*/
+void printTime() {
+	char timeLeft[32];
+	int substract = glutGet(GLUT_ELAPSED_TIME) - startTime;
+	time = (120000 - substract) / 1000;
+	_itoa_s(time, timeLeft, 10);
+
+	glRasterPos3f(2.0f, 1.9f, 4.9f);
+	std::string timeleft = "Time left: ";
+	for (char& c : timeleft) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
+	}
+	if (time == 0) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+		// time is 0, call a method here.
+		loadVictoryscreen();
+		glutDisplayFunc(startMenu);
+	}
+	else if (time < 60) { // time is lower than 60 seconds, print easy algorithm
+		length = floor(log10(abs(time))) + 1;
+		for (int i = 0; i < length; i++)
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, timeLeft[i]);
+	}
+	else { // time is higher than 60 seconds, print harder algorithm
+		char minutes[32];
+		_itoa_s(time / 60, minutes, 10);
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, minutes[0]);
+
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
+		//seconds
+		_itoa_s(time % 60, timeLeft, 10);
+		length = floor(log10(abs(time % 60))) + 1;
+		for (int i = 0; i < length; i++) {
+			if (length < 2)
+				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, timeLeft[i]);
+		}
+		if (time % 60 == 0) {
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+		}
+	}
 }
 
 
@@ -320,6 +388,10 @@ void GameObjectCollision(GameObject *o) {
 			upper->addComponent(ObjectComponent::build("models/citroen/citroenBovenkant.obj"));
 			lower->addComponent(ObjectComponent::build("models/citroen/citroenOnderkant.obj"));
 		}
+		else if (o->index == 15) {
+			loadDefeatscreen();
+			glutDisplayFunc(startMenu);
+		}
 
 
 		upper->addComponent(new SpinComponent(rand() % 40 + 20));
@@ -399,44 +471,6 @@ void mouseButton(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON) {
 		playSounds(0);
 	}
-}
-
-void startMenu() {
-	glClearColor(0.4f, 0.4f, 0.4f, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, width, height, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, background);
-	glColor4f(1, 1, 1, 1);
-	glDisable(GL_LIGHTING);
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
-	glTexCoord2f(0, 1); glVertex3f(0, height, 0);
-	glTexCoord2f(1, 1); glVertex3f(width, height, 0);
-	glTexCoord2f(1, 0); glVertex3f(width, 0, 0);
-	glEnd();
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(90.0f, (float)width / (float)height, 0.1f, 500.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0, 0, 7,
-		0, 0, 0,
-		0, 1, 0);
-
-	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_LIGHTING);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-
-
-	glutSwapBuffers();
 }
 
 
