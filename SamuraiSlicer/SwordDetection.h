@@ -21,3 +21,5 @@ struct plaine {
 void DrawSwordPlaine(int fx, int fy, int lx, int ly);
 bool DetectCollision(GameObject object);
 int readCam(void);
+void findFirstPixel(cv::Mat m, int * fY, int * fX);
+void findLastPixel(cv::Mat m, int * lY, int * lX);
