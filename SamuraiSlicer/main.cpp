@@ -18,6 +18,7 @@ int width = 1200;
 int timeElapsed = 0;
 int spawnTime = 3000;
 int score = 0;
+int time, startTime, length;
 bool isStarted = false;
 
 int fx, fy;
@@ -26,7 +27,7 @@ int lx, ly;
 std::list<GameObject*> objects;
 irrklang::ISoundEngine* engine;
 
-cv::VideoCapture cap(1);
+cv::VideoCapture cap(0);
 cv::Mat frame, nonFlipped, hsvFrame, rgbFrame;
 cv::Mat redChannel[3], saturationChannel[3], redValue, satValue, sword;
 
@@ -43,11 +44,19 @@ void playSounds(int nr)
 	if (nr == 0)
 		engine->play2D("Sounds/click.mp3", false);
 	if (nr == 1)
-		engine->play2D("Sounds/SlicingSound.mp3", false);
+		engine->play2D("Sounds/Slicing1.mp3", false);
 	if (nr == 2)
 		engine->play2D("Sounds/SamuraiSlicer.mp3", false);
 	if (nr == 3)
 		engine->play2D("Sounds/explosion.wav", false);
+	if (nr == 4)
+		engine->play2D("Sounds/Slicing2.mp3", false);
+	if (nr == 5)
+		engine->play2D("Sounds/Slicing3.mp3", false);
+	if (nr == 6)
+		engine->play2D("Sounds/Slicing4.mp3", false);
+	if (nr == 7)
+		engine->play2D("Sounds/Slicing5.mp3", false);
 }
 
 void playMusic(int nr)
@@ -70,7 +79,7 @@ void printScore(int s)
 {
 	char score[32];
 	_itoa_s(s, score, 10);
-	int lenght = floor(log10(abs(s))) + 1;
+	length = floor(log10(abs(s))) + 1;
 	glRasterPos3f(-3.1f, 1.9f, 4.9f);
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'S');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'C');
@@ -80,8 +89,53 @@ void printScore(int s)
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
 	if (s == 0) {glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');}
-	else {for (int i = 0; i < lenght; i++)
+	else {for (int i = 0; i < length; i++)
 		{glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, score[i]);}}
+}
+
+/**
+ * print time left to play the game,
+ * when the timer hits 0 call method @TODO
+*/
+void printTime() {
+	char timeLeft[32];
+	int substract = glutGet(GLUT_ELAPSED_TIME) - startTime;
+	time = (150000 - substract) / 1000;
+	_itoa_s(time, timeLeft, 10);
+
+	glRasterPos3f(2.0f, 1.9f, 4.9f);
+	std::string timeleft = "Time left: ";
+	for (char& c : timeleft) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, c);
+	}
+	if (time == 0) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0'); 
+		// time is 0, call a method here.
+	}
+	else if(time < 60) { // time is lower than 60 seconds, print easy algorithm
+		length = floor(log10(abs(time))) + 1;
+		for (int i = 0; i < length; i++)
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, timeLeft[i]);
+	}
+	else { // time is higher than 60 seconds, print harder algorithm
+		char minutes[32];
+		_itoa_s(time % 60, minutes, 10);
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, minutes[0]);
+
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
+		//seconds
+		_itoa_s(time % 60, timeLeft, 10);
+		length = floor(log10(abs(time%60))) + 1;
+		for (int i = 0; i < length; i++) {
+			if (length < 2)
+				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, timeLeft[i]);
+		}
+		if (time % 60 == 0) {
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+		}
+	}
 }
 
 void keyboard(unsigned char key, int x, int  y)
@@ -203,6 +257,7 @@ void display()
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	printScore(score); // Print score to screen
+	printTime();
 	for (auto &o : objects)
 		o->draw();
 
@@ -308,7 +363,21 @@ void idle()
 		o->update(deltaTime);
 
 	for (GameObject* o : objects) {
-		GameObjectCollision(o);
+		if (DetectCollision(*o)) {
+			objects.remove(o);
+			int random = rand() % 5;
+			if (random == 0)
+				playSounds(1);
+			else if (random == 1)
+				playSounds(4);
+			else if (random == 2)
+				playSounds(5);
+			else if (random == 3)
+				playSounds(6);
+			else
+				playSounds(7);
+			score++;
+		}
 	}
 
 	glutPostRedisplay();
@@ -322,7 +391,14 @@ void mouseButton(int button, int state, int x, int y) {
 		playSounds(2);
 		loadBackground();
 		initFruit();
+		playMusic(2);
+		playSounds(2);
 		isStarted = true;
+		startTime = glutGet(GLUT_ELAPSED_TIME);
+	}
+
+	if (button == GLUT_LEFT_BUTTON) {
+		playSounds(0);
 	}
 }
 
