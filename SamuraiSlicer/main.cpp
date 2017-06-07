@@ -29,7 +29,7 @@ int lx, ly;
 std::list<GameObject*> objects;
 irrklang::ISoundEngine* engine;
 
-cv::VideoCapture cap(0);
+cv::VideoCapture cap(1);
 cv::Mat frame, nonFlipped, hsvFrame, rgbFrame;
 cv::Mat redChannel[3], saturationChannel[3], redValue, satValue, sword;
 
@@ -82,6 +82,8 @@ void playMusic(int nr)
 
 void printScore(int s)
 {
+	glDisable(GL_TEXTURE_2D);
+	glColor4f(1, 1, 1, 1);
 	char score[32];
 	_itoa_s(s, score, 10);
 	length = floor(log10(abs(s))) + 1;
@@ -97,6 +99,7 @@ void printScore(int s)
 	if (s == 0) {glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');}
 	else {for (int i = 0; i < length; i++)
 		{glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, score[i]);}}
+	glEnable(GL_TEXTURE_2D);
 }
 
 /**
@@ -377,7 +380,6 @@ void defeatMenu() {
 }
 
 
-
 void initFruit() {
 	for (int i = 0; i < 520; i ++) {
 		GameObject* fruit = new GameObject();
@@ -415,7 +417,7 @@ void init()
 	
 	engine = irrklang::createIrrKlangDevice();
 	playMusic(0);
-	camInit();
+	//camInit();
 
 	loadStartscreen();
 	
@@ -491,7 +493,7 @@ void CamLoop()
 	//multiplies thresholded channels
 	multiply(redValue, satValue, sword, 1.0, -1);
 
-	imshow("SamuraiSlicer", sword);
+	//imshow("SamuraiSlicer", sword);
 
 	findFirstPixel(sword, &fx, &fy);
 	findLastPixel(sword, &lx, &ly);
@@ -504,7 +506,10 @@ void GameObjectCollision(GameObject *o) {
 		GameObject* upper = new GameObject();
 		GameObject* lower = new GameObject();
 
-		score++;
+		if (!soundUit)
+			score++;
+
+		glDisable(GL_TEXTURE_2D);
 
 		if (o->index <= 4) {
 			upper->addComponent(ObjectComponent::build("models/appeltje/appeltjeBovenkant.obj"));
@@ -525,6 +530,7 @@ void GameObjectCollision(GameObject *o) {
 			soundUit = true;		
 		}
 
+		glDisable(GL_TEXTURE_2D);
 
 		upper->addComponent(new SpinComponent(rand() % 40 + 20));
 		lower->addComponent(new SpinComponent(rand() % 40 + 20));
@@ -579,8 +585,12 @@ void idle()
 	for (auto &o : objects)
 		o->update(deltaTime);
 
-	for (GameObject* o : objects) {
-		GameObjectCollision(o);
+	try {
+		for (GameObject* o : objects) 
+			GameObjectCollision(o);
+	}
+	catch (std::exception e) {
+		std::cout << "Uknown Expcetion" << std::endl;
 	}
 
 	glutPostRedisplay();
