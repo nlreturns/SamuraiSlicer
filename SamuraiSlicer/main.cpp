@@ -80,6 +80,7 @@ void printScore(int s)
 	char score[32];
 	_itoa_s(s, score, 10);
 	length = floor(log10(abs(s))) + 1;
+	glColor3f(1, 1, 1);
 	glRasterPos3f(-3.1f, 1.9f, 4.9f);
 	glEnable(GL_COLOR);
 	glDisable(GL_LIGHTING);
@@ -107,6 +108,7 @@ void printTime() {
 	time = (120000 - substract) / 1000;
 	_itoa_s(time, timeLeft, 10);
 
+	glColor3f(1, 1, 1);
 	glRasterPos3f(2.0f, 1.9f, 4.9f);
 	std::string timeleft = "Time left: ";
 	for (char& c : timeleft) {
