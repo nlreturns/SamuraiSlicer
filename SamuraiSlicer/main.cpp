@@ -26,7 +26,7 @@ int lx, ly;
 std::list<GameObject*> objects;
 irrklang::ISoundEngine* engine;
 
-cv::VideoCapture cap(0);
+cv::VideoCapture cap(1);
 cv::Mat frame, nonFlipped, hsvFrame, rgbFrame;
 cv::Mat redChannel[3], saturationChannel[3], redValue, satValue, sword;
 
@@ -131,14 +131,14 @@ void initFruit() {
 		GameObject* fruit = new GameObject();
 
 		int random = rand() % 16;	
-		if (random >= 4) 
+		if (random <= 4) 
 			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
-		else if (random >= 9)
+		else if (random >= 5 && random <= 9)
 			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
-		else if(random >= 14)
+		else if(random >= 10 && random <= 14)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
 		else
-			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
+			//fruit->addComponent(ObjectComponent::build("models/bom/bom.obj"));
 		fruit->index = random;
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
@@ -248,6 +248,8 @@ void GameObjectCollision(GameObject *o) {
 	if (DetectCollision(*o) && o->collision) {
 		GameObject* upper = new GameObject();
 		GameObject* lower = new GameObject();
+
+		score++;
 
 		if (o->index <= 4) {
 			upper->addComponent(ObjectComponent::build("models/appeltje/appeltjeBovenkant.obj"));
