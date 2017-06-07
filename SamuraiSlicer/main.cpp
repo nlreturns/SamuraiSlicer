@@ -8,6 +8,8 @@
 #include "SpinComponent.h"
 #include "SwordDetection.h"
 #include "FallComponent.h"
+#include "UpperComponent.h"
+#include "LowerComponent.h"
 #include <irrKlang.h>
 #include "Sounds.h"
 
@@ -169,7 +171,7 @@ void loadStartscreen() {
 	glBindTexture(GL_TEXTURE_2D, background);
 
 	int width, height, depth;
-	unsigned char* data = stbi_load("images/startscreen.png", &width, &height, &depth, 4);
+	unsigned char* data = stbi_load("images/samuraislicer.jpg", &width, &height, &depth, 4);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	stbi_image_free(data);
@@ -177,17 +179,23 @@ void loadStartscreen() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
+
 void initFruit() {
 	for (int i = 0; i < 500; i ++) {
 		GameObject* fruit = new GameObject();
 
-		int random = rand() % 3;	
-		if (random == 0) 
+		int random = rand() % 16;	
+		if (random <= 4) 
 			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
-		else if (random == 1)
+		else if (random >= 5 && random <= 9)
 			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
-		else if(random == 2)
+		else if(random >= 10 && random <= 14)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
+		else {
+			//fruit->addComponent(ObjectComponent::build("models/bom/bom.obj"));
+		}
+
+		fruit->index = random;
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
 		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
@@ -206,12 +214,13 @@ void init()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-
+	
 	engine = irrklang::createIrrKlangDevice();
 	playMusic(0);
 	camInit();
 
-	loadBackground();
+	loadStartscreen();
+	
 }
 
 void display()
@@ -291,6 +300,64 @@ void CamLoop()
 
 }
 
+
+void GameObjectCollision(GameObject *o) {
+	if (DetectCollision(*o) && o->collision) {
+		GameObject* upper = new GameObject();
+		GameObject* lower = new GameObject();
+
+		score++;
+
+		if (o->index <= 4) {
+			upper->addComponent(ObjectComponent::build("models/appeltje/appeltjeBovenkant.obj"));
+			lower->addComponent(ObjectComponent::build("models/appeltje/appeltjeOnderkant.obj"));
+		}		
+		else if (o->index >=  5 && o->index <= 9) {
+			upper->addComponent(ObjectComponent::build("models/banaan/banaanBovenkant.obj"));
+			lower->addComponent(ObjectComponent::build("models/banaan/banaanOnderkant.obj"));
+		}
+		else if (o->index >= 10 && o->index <= 14) {
+			upper->addComponent(ObjectComponent::build("models/citroen/citroenBovenkant.obj"));
+			lower->addComponent(ObjectComponent::build("models/citroen/citroenOnderkant.obj"));
+		}
+
+
+		upper->addComponent(new SpinComponent(rand() % 40 + 20));
+		lower->addComponent(new SpinComponent(rand() % 40 + 20));
+		upper->position = o->position;
+		lower->position = o->position;
+
+		upper->addComponent(new UpperComponent());
+		lower->addComponent(new LowerComponent());
+
+		upper->collision = false;
+		lower->collision = false;
+
+		objects.remove(o);
+		objects.push_back(upper);
+		objects.push_back(lower);
+
+
+		int random = rand() % 5;
+		if (random == 0)
+			playSounds(1);
+		else if (random == 1)
+			playSounds(4);
+		else if (random == 2)
+			playSounds(5);
+		else if (random == 3)
+			playSounds(6);
+		else
+			playSounds(7);
+	}
+	else if (!o->collision) {
+		o->count++;
+		if (o->count > 10) {
+			objects.remove(o);
+		}
+	}
+}
+
 int lastTime = 0;
 bool firstTime = true;
 void idle()
@@ -309,21 +376,7 @@ void idle()
 		o->update(deltaTime);
 
 	for (GameObject* o : objects) {
-		if (DetectCollision(*o)) {
-			objects.remove(o);
-			int random = rand() % 5;
-			if (random == 0)
-				playSounds(1);
-			else if (random == 1)
-				playSounds(4);
-			else if (random == 2)
-				playSounds(5);
-			else if (random == 3)
-				playSounds(6);
-			else
-				playSounds(7);
-			score++;
-		}
+		GameObjectCollision(o);
 	}
 
 	glutPostRedisplay();
@@ -334,6 +387,7 @@ void mouseButton(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && isStarted == false) {
 		glutDisplayFunc(display);
 		glutIdleFunc(idle);
+		playSounds(2);
 		loadBackground();
 		initFruit();
 		playMusic(2);
@@ -345,8 +399,6 @@ void mouseButton(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON) {
 		playSounds(0);
 	}
-
-	glutPostRedisplay();
 }
 
 void startMenu() {
@@ -387,6 +439,7 @@ void startMenu() {
 	glutSwapBuffers();
 }
 
+
 int main(int argc, char* argv[])
 {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
@@ -398,7 +451,6 @@ int main(int argc, char* argv[])
 	init();
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
-	glutIdleFunc(idle);
 
 	glutMainLoop();
 

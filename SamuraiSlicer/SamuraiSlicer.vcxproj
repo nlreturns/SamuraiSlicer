@@ -160,10 +160,12 @@
     <ClCompile Include="DrawComponent.cpp" />
     <ClCompile Include="FallComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="LowerComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ObjectComponent.cpp" />
     <ClCompile Include="Sounds.cpp" />
     <ClCompile Include="SpinComponent.cpp" />
+    <ClCompile Include="UpperComponent.cpp" />
     <ClCompile Include="SwordDetection.cpp" />
     <ClCompile Include="Vec.cpp" />
   </ItemGroup>
@@ -172,9 +174,12 @@
     <ClInclude Include="CubeComponent.h" />
     <ClInclude Include="DrawComponent.h" />
     <ClInclude Include="FallComponent.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="LowerComponent.h" />
     <ClInclude Include="ObjectComponent.h" />
     <ClInclude Include="Sounds.h" />
     <ClInclude Include="SpinComponent.h" />
+    <ClInclude Include="UpperComponent.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="SwordDetection.h" />
     <ClInclude Include="Vec.h" />
