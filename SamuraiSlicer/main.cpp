@@ -21,6 +21,7 @@ int spawnTime = 3000;
 int score = 0;
 int time, startTime, length;
 bool isStarted = false;
+bool soundUit = false;
 
 int fx, fy;
 int lx, ly;
@@ -42,22 +43,25 @@ void reshape(int w, int h)
 
 void playSounds(int nr)
 {
-	if (nr == 0)
-		engine->play2D("Sounds/click.mp3", false);
-	if (nr == 1)
-		engine->play2D("Sounds/Slicing1.mp3", false);
-	if (nr == 2)
-		engine->play2D("Sounds/SamuraiSlicer.mp3", false);
-	if (nr == 3)
-		engine->play2D("Sounds/explosion.wav", false);
-	if (nr == 4)
-		engine->play2D("Sounds/Slicing2.mp3", false);
-	if (nr == 5)
-		engine->play2D("Sounds/Slicing3.mp3", false);
-	if (nr == 6)
-		engine->play2D("Sounds/Slicing4.mp3", false);
-	if (nr == 7)
-		engine->play2D("Sounds/Slicing5.mp3", false);
+	if (!soundUit) {
+		if (nr == 0)
+			engine->play2D("Sounds/click.mp3", false);
+		if (nr == 1)
+			engine->play2D("Sounds/Slicing1.mp3", false);
+		if (nr == 2)
+			engine->play2D("Sounds/SamuraiSlicer.mp3", false);
+		if (nr == 3)
+			engine->play2D("Sounds/explosion.wav", false);
+		if (nr == 4)
+			engine->play2D("Sounds/Slicing2.mp3", false);
+		if (nr == 5)
+			engine->play2D("Sounds/Slicing3.mp3", false);
+		if (nr == 6)
+			engine->play2D("Sounds/Slicing4.mp3", false);
+		if (nr == 7)
+			engine->play2D("Sounds/Slicing5.mp3", false);
+	}
+
 }
 
 void playMusic(int nr)
@@ -121,6 +125,7 @@ void loadBackground() {
 	stbi_image_free(data);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 }
 
 void loadStartscreen() {
@@ -134,9 +139,13 @@ void loadStartscreen() {
 	stbi_image_free(data);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 }
 
 void loadVictoryscreen() {
+
+	isStarted = false;
+
 	glGenTextures(1, &background);
 	glBindTexture(GL_TEXTURE_2D, background);
 
@@ -147,9 +156,13 @@ void loadVictoryscreen() {
 	stbi_image_free(data);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 }
 
 void loadDefeatscreen() {
+
+	isStarted = false;
+
 	glGenTextures(1, &background);
 	glBindTexture(GL_TEXTURE_2D, background);
 
@@ -160,6 +173,7 @@ void loadDefeatscreen() {
 	stbi_image_free(data);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 }
 
 void startMenu() {
@@ -391,8 +405,10 @@ void GameObjectCollision(GameObject *o) {
 			lower->addComponent(ObjectComponent::build("models/citroen/citroenOnderkant.obj"));
 		}
 		else if (o->index == 15) {
+			playSounds(3);
 			loadDefeatscreen();
 			glutDisplayFunc(startMenu);
+			soundUit = true;
 		}
 
 
@@ -463,10 +479,13 @@ void mouseButton(int button, int state, int x, int y) {
 		glutIdleFunc(idle);
 		playSounds(2);
 		loadBackground();
+		objects.clear();
 		initFruit();
 		playMusic(2);
 		playSounds(2);
 		isStarted = true;
+		score = 0;
+		soundUit = false;
 		startTime = glutGet(GLUT_ELAPSED_TIME);
 	}
 
