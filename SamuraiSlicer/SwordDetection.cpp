@@ -53,7 +53,7 @@ void DrawSwordPlaine(int fx, int fy, int lx, int ly) {
 
 	glDisable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
-	glColor4f(1, 1, 1, 1);
+	glColor4f(0, 0, 0, 0);
 	glVertex3f(SwordPlaine.topX1, SwordPlaine.topY1, 1);
 	glVertex3f(SwordPlaine.topX2, SwordPlaine.topY2, 1);
 	glVertex3f(SwordPlaine.downX2, SwordPlaine.downY2, 1);

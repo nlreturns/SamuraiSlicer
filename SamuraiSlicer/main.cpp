@@ -12,6 +12,7 @@
 #include "LowerComponent.h"
 #include <irrKlang.h>
 #include "Sounds.h"
+#include "Main.h"
 
 int height = 800;
 int width = 1200;
@@ -20,6 +21,7 @@ int spawnTime = 3000;
 int score = 0;
 int time, startTime, length;
 bool isStarted = false;
+bool soundUit = false;
 
 int fx, fy;
 int lx, ly;
@@ -41,22 +43,25 @@ void reshape(int w, int h)
 
 void playSounds(int nr)
 {
-	if (nr == 0)
-		engine->play2D("Sounds/click.mp3", false);
-	if (nr == 1)
-		engine->play2D("Sounds/Slicing1.mp3", false);
-	if (nr == 2)
-		engine->play2D("Sounds/SamuraiSlicer.mp3", false);
-	if (nr == 3)
-		engine->play2D("Sounds/explosion.wav", false);
-	if (nr == 4)
-		engine->play2D("Sounds/Slicing2.mp3", false);
-	if (nr == 5)
-		engine->play2D("Sounds/Slicing3.mp3", false);
-	if (nr == 6)
-		engine->play2D("Sounds/Slicing4.mp3", false);
-	if (nr == 7)
-		engine->play2D("Sounds/Slicing5.mp3", false);
+	if (!soundUit) {
+		if (nr == 0)
+			engine->play2D("Sounds/click.mp3", false);
+		if (nr == 1)
+			engine->play2D("Sounds/Slicing1.mp3", false);
+		if (nr == 2)
+			engine->play2D("Sounds/SamuraiSlicer.mp3", false);
+		if (nr == 3)
+			engine->play2D("Sounds/explosion.wav", false);
+		if (nr == 4)
+			engine->play2D("Sounds/Slicing2.mp3", false);
+		if (nr == 5)
+			engine->play2D("Sounds/Slicing3.mp3", false);
+		if (nr == 6)
+			engine->play2D("Sounds/Slicing4.mp3", false);
+		if (nr == 7)
+			engine->play2D("Sounds/Slicing5.mp3", false);
+	}
+
 }
 
 void playMusic(int nr)
@@ -82,6 +87,7 @@ void printScore(int s)
 	char score[32];
 	_itoa_s(s, score, 10);
 	length = floor(log10(abs(s))) + 1;
+	glColor3f(1, 1, 1);
 	glRasterPos3f(-3.1f, 1.9f, 4.9f);
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'S');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'C');
@@ -169,6 +175,7 @@ void loadBackground() {
 	stbi_image_free(data);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 }
 
 void loadStartscreen() {
@@ -182,11 +189,83 @@ void loadStartscreen() {
 	stbi_image_free(data);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 }
 
+void loadVictoryscreen() {
+
+	isStarted = false;
+
+	glGenTextures(1, &background);
+	glBindTexture(GL_TEXTURE_2D, background);
+
+	int width, height, depth;
+	unsigned char* data = stbi_load("images/Victoryscreen.png", &width, &height, &depth, 4);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	stbi_image_free(data);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+}
+
+void loadDefeatscreen() {
+
+	isStarted = false;
+
+	glGenTextures(1, &background);
+	glBindTexture(GL_TEXTURE_2D, background);
+
+	int width, height, depth;
+	unsigned char* data = stbi_load("images/Defeatscreen.png", &width, &height, &depth, 4);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	stbi_image_free(data);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+}
+
+void startMenu() {
+	glClearColor(0.4f, 0.4f, 0.4f, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, width, height, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, background);
+	glColor4f(1, 1, 1, 1);
+	glDisable(GL_LIGHTING);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
+	glTexCoord2f(0, 1); glVertex3f(0, height, 0);
+	glTexCoord2f(1, 1); glVertex3f(width, height, 0);
+	glTexCoord2f(1, 0); glVertex3f(width, 0, 0);
+	glEnd();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(90.0f, (float)width / (float)height, 0.1f, 500.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0, 0, 7,
+		0, 0, 0,
+		0, 1, 0);
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+
+
+	glutSwapBuffers();
+}
 
 void initFruit() {
-	for (int i = 0; i < 500; i ++) {
+	for (int i = 0; i < 520; i ++) {
 		GameObject* fruit = new GameObject();
 
 		int random = rand() % 16;	
@@ -197,7 +276,7 @@ void initFruit() {
 		else if(random >= 10 && random <= 14)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
 		else {
-			//fruit->addComponent(ObjectComponent::build("models/bom/bom.obj"));
+			fruit->addComponent(ObjectComponent::build("models/bom/grayBom.obj"));
 		}
 
 		fruit->index = random;
@@ -327,6 +406,12 @@ void GameObjectCollision(GameObject *o) {
 			upper->addComponent(ObjectComponent::build("models/citroen/citroenBovenkant.obj"));
 			lower->addComponent(ObjectComponent::build("models/citroen/citroenOnderkant.obj"));
 		}
+		else if (o->index == 15) {
+			playSounds(3);
+			loadDefeatscreen();
+			glutDisplayFunc(startMenu);
+			soundUit = true;
+		}
 
 		glDisable(GL_TEXTURE_2D);
 
@@ -401,54 +486,19 @@ void mouseButton(int button, int state, int x, int y) {
 		glutIdleFunc(idle);
 		playSounds(2);
 		loadBackground();
+		objects.clear();
 		initFruit();
 		playMusic(2);
 		playSounds(2);
 		isStarted = true;
+		score = 0;
+		soundUit = false;
 		startTime = glutGet(GLUT_ELAPSED_TIME);
 	}
 
 	if (button == GLUT_LEFT_BUTTON) {
 		playSounds(0);
 	}
-}
-
-void startMenu() {
-	glClearColor(0.4f, 0.4f, 0.4f, 1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, width, height, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, background);
-	glColor4f(1, 1, 1, 1);
-	glDisable(GL_LIGHTING);
-
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
-	glTexCoord2f(0, 1); glVertex3f(0, height, 0);
-	glTexCoord2f(1, 1); glVertex3f(width, height, 0);
-	glTexCoord2f(1, 0); glVertex3f(width, 0, 0);
-	glEnd();
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(90.0f, (float)width / (float)height, 0.1f, 500.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0, 0, 7,
-		0, 0, 0,
-		0, 1, 0);
-
-	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_LIGHTING);
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-
-
-	glutSwapBuffers();
 }
 
 
