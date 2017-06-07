@@ -24,7 +24,8 @@ int lx, ly;
 std::list<GameObject*> objects;
 irrklang::ISoundEngine* engine;
 
-cv::VideoCapture cap(1);
+
+cv::VideoCapture cap(0);
 cv::Mat frame, nonFlipped, hsvFrame, rgbFrame;
 cv::Mat redChannel[3], saturationChannel[3], redValue, satValue, sword;
 
@@ -124,16 +125,18 @@ void loadStartscreen() {
 }
 
 void initFruit() {
-	for (int i = 0; i < 500; i ++) {
+	for (int i = 0; i < 520; i ++) {
 		GameObject* fruit = new GameObject();
 
-		int random = rand() % 3;	
-		if (random == 0) 
+		int random = rand() % 4;	
+		if (random == 0)
 			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
 		else if (random == 1)
 			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
-		else if(random == 2)
+		else if (random == 2)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
+		else if (random == 3)
+			fruit->addComponent(ObjectComponent::build("models/bom/bom5.obj"));
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
 		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
