@@ -42,8 +42,8 @@ private:
 	{
 	public:
 		int position;
-		int normal;
-		int texcoord;
+		int normal = -1;
+		int texcoord = -1;
 	};
 
 	class Face
@@ -57,6 +57,7 @@ private:
 		MaterialInfo();
 		std::string name;
 		Texture* texture;
+		Vec3f color;
 	};
 
 	class ObjGroup
