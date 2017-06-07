@@ -11,6 +11,10 @@ void playMusic(int nr);
 
 void printScore(int s);
 
+void printVictoryScore(int s);
+
+void printDefeatScore(int s);
+
 void keyboard(unsigned char key, int x, int  y);
 
 void loadBackground();
@@ -22,6 +26,10 @@ void loadVictoryscreen();
 void loadDefeatscreen();
 
 void startMenu();
+
+void victoryMenu();
+
+void defeatMenu();
 
 void printTime();
 
