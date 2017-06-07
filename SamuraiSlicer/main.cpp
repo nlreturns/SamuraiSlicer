@@ -41,11 +41,19 @@ void playSounds(int nr)
 	if (nr == 0)
 		engine->play2D("Sounds/click.mp3", false);
 	if (nr == 1)
-		engine->play2D("Sounds/SlicingSound.mp3", false);
+		engine->play2D("Sounds/Slicing1.mp3", false);
 	if (nr == 2)
 		engine->play2D("Sounds/SamuraiSlicer.mp3", false);
 	if (nr == 3)
 		engine->play2D("Sounds/explosion.wav", false);
+	if (nr == 4)
+		engine->play2D("Sounds/Slicing2.mp3", false);
+	if (nr == 5)
+		engine->play2D("Sounds/Slicing3.mp3", false);
+	if (nr == 6)
+		engine->play2D("Sounds/Slicing4.mp3", false);
+	if (nr == 7)
+		engine->play2D("Sounds/Slicing5.mp3", false);
 }
 
 void playMusic(int nr)
@@ -256,7 +264,17 @@ void idle()
 	for (GameObject* o : objects) {
 		if (DetectCollision(*o)) {
 			objects.remove(o);
-			playSounds(1);
+			int random = rand() % 5;
+			if (random == 0)
+				playSounds(1);
+			else if (random == 1)
+				playSounds(4);
+			else if (random == 2)
+				playSounds(5);
+			else if (random == 3)
+				playSounds(6);
+			else
+				playSounds(7);
 			score++;
 		}
 	}
