@@ -185,7 +185,7 @@ void display()
 	glEnable(GL_LIGHTING);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	printScore(score); // Print score to screen
+	//printScore(score); // Print score to screen
 	for (auto &o : objects)
 		o->draw();
 

@@ -13,14 +13,6 @@ plaine SwordPlaine;
 // Returns true if the GameObject colides with the sword plaine
 bool DetectCollision(GameObject object) {
 
-<<<<<<< HEAD
-	if (SwordPlaine.topX1 < SwordPlaine.topX2) {
-		return (((object.position.x <= SwordPlaine.topX1) && (object.position.x <= SwordPlaine.topX2)) &&
-			((object.position.y >= SwordPlaine.topY1) && (object.position.y <= SwordPlaine.downY1)));
-	}
-	return (((object.position.x >= SwordPlaine.topX1) && (object.position.x <= SwordPlaine.topX2)) && 
-		((object.position.y >= SwordPlaine.topY1) && (object.position.y <= SwordPlaine.downY1)));
-=======
 	//std::cout << "x1: " << SwordPlaine.topX1 << " x2: " << SwordPlaine.topX2 << "y1: " << SwordPlaine.topY1 << "y2: " << SwordPlaine.downY2 << std::endl;
 	//std::cout << "Fruit x: " << object.position.x << " y: " << object.position.y << "lx: " << std::endl;
 
@@ -36,9 +28,8 @@ bool DetectCollision(GameObject object) {
 	if (((object.position.x <= SwordPlaine.topX1) && (object.position.x >= SwordPlaine.topX2)) &&
 		((object.position.y <= SwordPlaine.topY1) && (object.position.y >= SwordPlaine.downY1)))
 		return true;
-	
-	return false; 
->>>>>>> refs/remotes/origin/TestBRanch
+
+	return false;
 }
 
 // Draws a plaine between 2 frames
@@ -72,7 +63,7 @@ void DrawSwordPlaine(int fx, int fy, int lx, int ly) {
 	previousY2 = ly;
 
 	glBegin(GL_QUADS);
-	glColor3f(0, 255, 0);
+	glColor3f(0, 0, 0);
 	glVertex3f(SwordPlaine.topX1, SwordPlaine.topY1, 1);
 	glVertex3f(SwordPlaine.topX2, SwordPlaine.topY2, 1);
 	glVertex3f(SwordPlaine.downX2, SwordPlaine.downY2, 1);
