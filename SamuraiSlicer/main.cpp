@@ -336,6 +336,19 @@ void GameObjectCollision(GameObject *o) {
 		objects.remove(o);
 		objects.push_back(upper);
 		objects.push_back(lower);
+
+
+		int random = rand() % 5;
+		if (random == 0)
+			playSounds(1);
+		else if (random == 1)
+			playSounds(4);
+		else if (random == 2)
+			playSounds(5);
+		else if (random == 3)
+			playSounds(6);
+		else
+			playSounds(7);
 	}
 	else if (!o->collision) {
 		o->count++;
@@ -363,21 +376,7 @@ void idle()
 		o->update(deltaTime);
 
 	for (GameObject* o : objects) {
-		if (DetectCollision(*o)) {
-			objects.remove(o);
-			int random = rand() % 5;
-			if (random == 0)
-				playSounds(1);
-			else if (random == 1)
-				playSounds(4);
-			else if (random == 2)
-				playSounds(5);
-			else if (random == 3)
-				playSounds(6);
-			else
-				playSounds(7);
-			score++;
-		}
+		GameObjectCollision(o);
 	}
 
 	glutPostRedisplay();
