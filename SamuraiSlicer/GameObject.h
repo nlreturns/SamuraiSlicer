@@ -23,7 +23,7 @@ public:
 	Vec3f scale = Vec3f(1,1,1);
 	bool collision = true;
 	int count = 0;
-	int index = 0;
+	int index;
 	
 
 

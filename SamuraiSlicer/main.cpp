@@ -137,8 +137,10 @@ void initFruit() {
 			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
 		else if(random >= 10 && random <= 14)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
-		else
+		else {
 			//fruit->addComponent(ObjectComponent::build("models/bom/bom.obj"));
+		}
+
 		fruit->index = random;
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
@@ -259,7 +261,7 @@ void GameObjectCollision(GameObject *o) {
 			upper->addComponent(ObjectComponent::build("models/banaan/banaanBovenkant.obj"));
 			lower->addComponent(ObjectComponent::build("models/banaan/banaanOnderkant.obj"));
 		}
-		else if (o->index >= 10 && o->index >= 14) {
+		else if (o->index >= 10 && o->index <= 14) {
 			upper->addComponent(ObjectComponent::build("models/citroen/citroenBovenkant.obj"));
 			lower->addComponent(ObjectComponent::build("models/citroen/citroenOnderkant.obj"));
 		}
