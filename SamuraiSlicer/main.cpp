@@ -256,6 +256,7 @@ void idle()
 	for (GameObject* o : objects) {
 		if (DetectCollision(*o)) {
 			objects.remove(o);
+			playSounds(1);
 			score++;
 		}
 	}
@@ -270,7 +271,13 @@ void mouseButton(int button, int state, int x, int y) {
 		glutIdleFunc(idle);
 		loadBackground();
 		initFruit();
+		playMusic(2);
+		playSounds(2);
 		isStarted = true;
+	}
+
+	if (button == GLUT_LEFT_BUTTON) {
+		playSounds(0);
 	}
 
 	glutPostRedisplay();
