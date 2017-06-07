@@ -176,6 +176,7 @@
     <ClInclude Include="FallComponent.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="LowerComponent.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="ObjectComponent.h" />
     <ClInclude Include="Sounds.h" />
     <ClInclude Include="SpinComponent.h" />
