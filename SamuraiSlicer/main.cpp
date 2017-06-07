@@ -106,7 +106,7 @@ void printScore(int s)
 void printTime() {
 	char timeLeft[32];
 	int substract = glutGet(GLUT_ELAPSED_TIME) - startTime;
-	time = (1200 - substract) / 1000;
+	time = (120000 - substract) / 1000;
 	_itoa_s(time, timeLeft, 10);
 
 	glColor3f(1, 1, 1);
@@ -521,9 +521,8 @@ void GameObjectCollision(GameObject *o) {
 		else if (o->index == 15) {
 			playSounds(3);
 			loadDefeatscreen();
-			glutDisplayFunc(startMenu);
-			soundUit = true;
 			glutDisplayFunc(defeatMenu);
+			soundUit = true;		
 		}
 
 
