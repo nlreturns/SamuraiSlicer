@@ -98,7 +98,7 @@ void printScore(int s)
 void printTime() {
 	char timeLeft[32];
 	int substract = glutGet(GLUT_ELAPSED_TIME) - startTime;
-	time = (150000 - substract) / 1000;
+	time = (120000 - substract) / 1000;
 	_itoa_s(time, timeLeft, 10);
 
 	glRasterPos3f(2.0f, 1.9f, 4.9f);
@@ -117,7 +117,7 @@ void printTime() {
 	}
 	else { // time is higher than 60 seconds, print harder algorithm
 		char minutes[32];
-		_itoa_s(time % 60, minutes, 10);
+		_itoa_s(time / 60, minutes, 10);
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, minutes[0]);
 
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
