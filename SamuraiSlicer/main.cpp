@@ -81,6 +81,9 @@ void printScore(int s)
 	_itoa_s(s, score, 10);
 	length = floor(log10(abs(s))) + 1;
 	glRasterPos3f(-3.1f, 1.9f, 4.9f);
+	glEnable(GL_COLOR);
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'S');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'C');
 	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'O');
@@ -91,6 +94,7 @@ void printScore(int s)
 	if (s == 0) {glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');}
 	else {for (int i = 0; i < length; i++)
 		{glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, score[i]);}}
+	glDisable(GL_LIGHTING);
 }
 
 /**
@@ -192,7 +196,7 @@ void initFruit() {
 		else if(random >= 10 && random <= 14)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
 		else {
-			fruit->addComponent(ObjectComponent::build("models/bom/bom5.obj"));
+			fruit->addComponent(ObjectComponent::build("models/bom/grayBom.obj"));
 		}
 
 		fruit->index = random;
@@ -255,9 +259,12 @@ void display()
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHTING);
 	glClear(GL_DEPTH_BUFFER_BIT);
-
+	glEnable(GL_COLOR);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glDisable(GL_LIGHTING);
 	printScore(score); // Print score to screen
 	printTime();
+	glEnable(GL_LIGHTING);
 	for (auto &o : objects)
 		o->draw();
 
@@ -393,6 +400,8 @@ void mouseButton(int button, int state, int x, int y) {
 		playMusic(2);
 		playSounds(2);
 		isStarted = true;
+		glEnable(GL_COLOR);
+		glColor3f(1.0f, 0, 0);
 		startTime = glutGet(GLUT_ELAPSED_TIME);
 	}
 
