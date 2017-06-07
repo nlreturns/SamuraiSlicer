@@ -16,6 +16,7 @@ int width = 1200;
 int timeElapsed = 0;
 int spawnTime = 3000;
 int score = 0;
+int time = 120;
 bool isStarted = false;
 
 int fx, fy;
@@ -80,6 +81,21 @@ void printScore(int s)
 	if (s == 0) {glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');}
 	else {for (int i = 0; i < lenght; i++)
 		{glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, score[i]);}}
+}
+
+void printTime() {
+	char timeLeft[4];
+	_itoa_s(time, timeLeft, 10);
+	int lenght = floor(log10(abs(time))) + 1;
+	glRasterPos3f(3.1f, 1.9f, 4.9f);
+	glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, "Time left: ");
+	if (time == 0) { glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0'); }
+	else {
+		for (int i = 0; i < lenght; i++)
+		{
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, timeLeft[i]);
+		}
+	}
 }
 
 void keyboard(unsigned char key, int x, int  y)
