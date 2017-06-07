@@ -26,7 +26,7 @@ int lx, ly;
 std::list<GameObject*> objects;
 irrklang::ISoundEngine* engine;
 
-cv::VideoCapture cap(1);
+cv::VideoCapture cap(0);
 cv::Mat frame, nonFlipped, hsvFrame, rgbFrame;
 cv::Mat redChannel[3], saturationChannel[3], redValue, satValue, sword;
 
@@ -116,10 +116,6 @@ void loadStartscreen() {
 	glGenTextures(1, &background);
 	glBindTexture(GL_TEXTURE_2D, background);
 
-void loadStartscreen() {
-	glGenTextures(1, &background);
-	glBindTexture(GL_TEXTURE_2D, background);
-
 	int width, height, depth;
 	unsigned char* data = stbi_load("images/samuraislicer.jpg", &width, &height, &depth, 4);
 
@@ -131,24 +127,19 @@ void loadStartscreen() {
 
 
 void initFruit() {
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	stbi_image_free(data);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-}
-
-void initFruit() {
 	for (int i = 0; i < 500; i ++) {
 		GameObject* fruit = new GameObject();
 
-		int random = rand() % 3;	
-		if (random == 0) 
+		int random = rand() % 16;	
+		if (random >= 4) 
 			fruit->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
-		else if (random == 1)
+		else if (random >= 9)
 			fruit->addComponent(ObjectComponent::build("models/banaan/banaan.obj"));
-		else if(random == 2)
+		else if(random >= 14)
 			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
+		else
+			fruit->addComponent(ObjectComponent::build("models/citroen/citroen.obj"));
+		fruit->index = random;
 		fruit->addComponent(new SpinComponent(rand()%40+20));
 		fruit->addComponent(new FallComponent());
 		fruit->position = Vec3f((rand()%200-100)/10, i+10, 0.0f);
@@ -168,9 +159,6 @@ void init()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	
-	engine = irrklang::createIrrKlangDevice();
-	playMusic(0);
-
 	engine = irrklang::createIrrKlangDevice();
 	playMusic(0);
 	camInit();
@@ -255,6 +243,49 @@ void CamLoop()
 
 }
 
+
+void GameObjectCollision(GameObject *o) {
+	if (DetectCollision(*o) && o->collision) {
+		GameObject* upper = new GameObject();
+		GameObject* lower = new GameObject();
+
+		if (o->index <= 4) {
+			upper->addComponent(ObjectComponent::build("models/appeltje/appeltjeBovenkant.obj"));
+			lower->addComponent(ObjectComponent::build("models/appeltje/appeltjeOnderkant.obj"));
+		}		
+		else if (o->index >=  5 && o->index <= 9) {
+			upper->addComponent(ObjectComponent::build("models/banaan/banaanBovenkant.obj"));
+			lower->addComponent(ObjectComponent::build("models/banaan/banaanOnderkant.obj"));
+		}
+		else if (o->index >= 10 && o->index >= 14) {
+			upper->addComponent(ObjectComponent::build("models/citroen/citroenBovenkant.obj"));
+			lower->addComponent(ObjectComponent::build("models/citroen/citroenOnderkant.obj"));
+		}
+
+
+		upper->addComponent(new SpinComponent(rand() % 40 + 20));
+		lower->addComponent(new SpinComponent(rand() % 40 + 20));
+		upper->position = o->position;
+		lower->position = o->position;
+
+		upper->addComponent(new UpperComponent());
+		lower->addComponent(new LowerComponent());
+
+		upper->collision = false;
+		lower->collision = false;
+
+		objects.remove(o);
+		objects.push_back(upper);
+		objects.push_back(lower);
+	}
+	else if (!o->collision) {
+		o->count++;
+		if (o->count > 10) {
+			objects.remove(o);
+		}
+	}
+}
+
 int lastTime = 0;
 bool firstTime = true;
 void idle()
@@ -273,50 +304,11 @@ void idle()
 		o->update(deltaTime);
 
 	for (GameObject* o : objects) {
-		if (DetectCollision(*o) && o->collision) {	
-			GameObject* upper = new GameObject();
-			GameObject* lower = new GameObject();
-
-			
-			upper->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
-			lower->addComponent(ObjectComponent::build("models/appeltje/appeltje.obj"));
-			
-			upper->addComponent(new SpinComponent(rand() % 40 + 20));
-			lower->addComponent(new SpinComponent(rand() % 40 + 20));
-			upper->position = o->position;
-			lower->position = o->position;
-
-			upper->addComponent(new UpperComponent());
-			lower->addComponent(new LowerComponent());
-
-			upper->collision = false;
-			lower->collision = false;
-
-			objects.remove(o);
-			objects.push_back(upper);
-			objects.push_back(lower);			
-		}
-		else if(!o->collision){
-			o->count++;
-			if (o->count > 10) {
-				objects.remove(o);
-			}
-		}
-			
+		GameObjectCollision(o);
 	}
 
 	glutPostRedisplay();
 }
-
-void mouseButton(int button, int state, int x, int y) {
-	// only start motion if the left button is pressed
-	if (button == GLUT_LEFT_BUTTON && isStarted == false) {
-		glutDisplayFunc(display);
-		glutIdleFunc(idle);
-		loadBackground();
-		initFruit();
-		isStarted = true;
-	}
 
 void mouseButton(int button, int state, int x, int y) {
 	// only start motion if the left button is pressed
@@ -380,7 +372,6 @@ int main(int argc, char* argv[])
 	init();
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
-	glutIdleFunc(idle);
 
 	glutMainLoop();
 
